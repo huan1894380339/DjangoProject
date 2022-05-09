@@ -1,6 +1,6 @@
-from djagon.urls import path
-from .vews import *
+from django.urls import path
+from .views import *
 app_name = 'app1'
 urlpatterns = [
-    path('app1',api1,name="url_api1")
+    # path('app1',add_user,name="url_api")
 ]
