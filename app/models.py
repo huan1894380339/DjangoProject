@@ -64,9 +64,21 @@ class Cart(models.Model):
 
     def get_cart_total(self):
         cartitem =  self.cartitem_set.all()
-        total = sum([item.get_total for item in cartitem])
+        total = sum([product.get_total for product in cartitem])
         return total
 
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    def __str__(self):
+        return f'cart_id:{self.cart}'
+        
+    @property
+    def get_total(self):
+        total = self.quantity * self.product.price
+        return total
 
 class Order(models.Model):
     user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)

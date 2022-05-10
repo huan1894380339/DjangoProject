@@ -1,7 +1,7 @@
-import email
+
 from rest_framework import serializers
 from .models import CustomerUser
-class Register_serializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type':'password'}, write_only=True) 
     class Meta:
         model = CustomerUser
@@ -24,7 +24,8 @@ class Register_serializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'Missing data!'})
         return value
     
-    # def validation_username(value):
+
+    # def validation_username(value):dd
     #     if not value:
     #         raise serializers.ValidationError({'Missing data!'})
     #     return value
