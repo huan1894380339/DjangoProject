@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import io
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'gdstorage',
+    'import_export',
     'app',
 ]
 
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'projectnew.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,6 +73,17 @@ TEMPLATES = [
     },
 ]
 
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'app.authentication.SafeJWTAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     ),
+#     }
+SECRET_KEY="my_secret_key"
+REFRESH_TOKEN_SECRET="my_refresh_secret_key"
+
 WSGI_APPLICATION = 'projectnew.wsgi.application'
 
 # Environment Variables
@@ -78,24 +91,28 @@ import environ
 
 env = environ.Env()
 # reading .env file
-environ.Env.read_env()
-
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Raises django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
 SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DATABASE_NAME"),
-        'USER': env("DATABASE_USER"),
-        'PASSWORD': env("DATABASE_PASSWORD"),
-        'HOST': env("DATABASE_HOST"),
-        'PORT': env("DATABASE_PORT"),
-    }
+    'default': env.db(),
 }
-
+# EMAIL_BACKEND = env('EMAIL_BACKEND')
+# EMAIL_HOST = env('EMAIL_HOST')
+# EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+# EMAIL_PORT = env('EMAIL_PORT')
+# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+#config email server
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'huanduong.tl@gmail.com'
+EMAIL_HOST_PASSWORD = 'huan12345'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -141,3 +158,10 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL ='app.CustomerUser'
+
+#Django Google Drive Storage
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = os.path.join(BASE_DIR, 'google_key.json')
+GOOGLE_DRIVE_STORAGE_SERVICE_EMAIL="huanduong.tl@gmail.com"
+GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'https://drive.google.com/drive/folders/1paM-b29LRHpee_8m-wQ1xLdEdKorr-ZI' # OPTIONAL
+# APPEND_SLASH=False
+IMPORT_EXPORT_USE_TRANSACTIONS = True

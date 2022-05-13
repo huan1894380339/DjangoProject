@@ -1,17 +1,26 @@
-from cgi import print_directory
-from pyexpat import model
-from time import time
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from gdstorage.storage import GoogleDriveStorage
+
+# Define Google Drive Storage
+gd_storage = GoogleDriveStorage()
+
 
 # Create your models here.
-from django.contrib.auth.models import AbstractUser
 class CustomerUser(AbstractUser):
+    email = models.EmailField(unique=True)
     phone_number = models.CharField(default='', max_length=10)
     address = models.CharField(default='', max_length=255)
     
     def __str__(self) -> str:
         return self.username
 
+
+
+class Membership(models.Model):
+    customeruser = models.ForeignKey(CustomerUser, on_delete=models.Model)
+    rank = models.IntegerField()
+    voucher = models.IntegerField()
 
 class Contact(models.Model):
     name = models.CharField(max_length=20, blank=False, null=False)
@@ -33,12 +42,37 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    code = models.CharField( max_length=10)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     title = models.CharField(default='', max_length=200)
-    img_product = models.ImageField(null=True, blank=True)
+    img_product = models.FileField(upload_to='maps/', storage=gd_storage, blank=True)
     description = models.TextField(default='')
     price = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.title
+
+    @property
+    def img_url(self):
+        if self.img_product:
+            return self.img_product.url
+        return None
+
+class Discount(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    day_start = models.DateTimeField()
+    day_end = models.DateField()
+
+
+class Gallery(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="prod_gallery")
+    img_product = models.FileField(upload_to='maps/', storage=gd_storage, blank=True)
+    # def upload(request):
+    #     if request.method == "POST":
+    #         images = request.FILES.getlist('images')
+    #         for image in images:
+    #             Gallery.objects.create(images=image)
+    #     images = Gallery.objects.all()
 
 
 class Supplier(models.Model):
@@ -93,5 +127,3 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.id)
-
-
