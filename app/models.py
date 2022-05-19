@@ -5,7 +5,6 @@ from gdstorage.storage import GoogleDriveStorage
 # Define Google Drive Storage
 gd_storage = GoogleDriveStorage()
 
-
 # Create your models here.
 class CustomerUser(AbstractUser):
     email = models.EmailField(unique=True)
