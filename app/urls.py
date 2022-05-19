@@ -1,9 +1,7 @@
-from email.mime import base
 from django.urls import path, include
 from rest_framework import routers
 
-from projectnew import urls
-from .views import ProductInstance, SignUp, UploadImage, CSVHandleView
+from .views import ProductInstance, SignUp, UploadImage, CSVHandle, UploadImageView
 from rest_framework import routers
 app_name = 'app'
 
@@ -13,7 +11,9 @@ router.register(r'', ProductInstance, basename='product')
 urlpatterns = [
     path('sign-up/', SignUp.as_view(), name='sign-up'),
     path('upload-images/', UploadImage.as_view(), name = 'upload-images'),
-    path('import-csv/', CSVHandleView.as_view(), name = 'import-csv'),
+    path('upload/', UploadImageView.as_view(), name = 'uploads-images'),
+    # path('import-csv/', CSVHandleView.as_view(), name = 'import-csv'),
+    path('import/', CSVHandle.as_view(), name = 'import'),
     path('product/', include(router.urls),)
 ]
 urlpatterns = urlpatterns + router.urls

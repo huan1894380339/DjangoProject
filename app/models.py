@@ -50,7 +50,7 @@ class Product(models.Model):
     price = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     def __str__(self):
-        return self.title
+        return str(self.id)
 
     @property
     def img_url(self):
