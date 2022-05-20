@@ -1,0 +1,45 @@
+repos:
+#   # trailling comma
+#   - repo: https://github.com/asottile/add-trailing-comma
+#     rev: v2.1.0
+#     hooks:
+#       - id: add-trailing-comma
+
+#   # sorting imports
+#   - repo: https://github.com/pycqa/isort
+#     rev: 5.8.0
+#     hooks:
+#       - id: isort
+#         exclude: migrations
+  - repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: v1.6.0
+    hooks:
+      - id: autopep8
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        exclude: migrations
+        args:
+          [
+            --max-line-length=120,
+            --max-complexity=18,
+            --select=B C E F W T4 B9,
+            --ignore=E266 E501 W503 F403 C901,
+            --exclude=__init__.py
+          ]
+
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+  # validate FLAKE8
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-docstring-first
+    - id: check-merge-conflict
+    - id: check-added-large-files
