@@ -7,17 +7,21 @@ import gdstorage.storage
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('app', '0003_alter_product_img_product'),
+        ("app", "0003_alter_product_img_product"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='gallery',
-            name='img',
+            model_name="gallery",
+            name="img",
         ),
         migrations.AddField(
-            model_name='gallery',
-            name='img_product',
-            field=models.FileField(blank=True, storage=gdstorage.storage.GoogleDriveStorage(), upload_to='maps/'),
+            model_name="gallery",
+            name="img_product",
+            field=models.FileField(
+                blank=True,
+                storage=gdstorage.storage.GoogleDriveStorage(),
+                upload_to="maps/",
+            ),
         ),
     ]

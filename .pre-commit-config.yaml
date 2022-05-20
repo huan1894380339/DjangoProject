@@ -11,10 +11,10 @@ repos:
 #     hooks:
 #       - id: isort
 #         exclude: migrations
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.6.0
-    hooks:
-      - id: autopep8
+  # - repo: https://github.com/pre-commit/mirrors-autopep8
+  #   rev: v1.6.0
+  #   hooks:
+  #     - id: autopep8
 
   - repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
@@ -30,10 +30,10 @@ repos:
             --exclude=__init__.py
           ]
 
-  - repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-      - id: black
+  # - repo: https://github.com/psf/black
+  #   rev: 22.3.0
+  #   hooks:
+  #     - id: black
   # validate FLAKE8
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.2.0
