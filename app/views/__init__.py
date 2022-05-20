@@ -1,1 +1,1 @@
-from app.views.product import ProductInstance
+from __future__ import annotations

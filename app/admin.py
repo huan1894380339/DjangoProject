@@ -1,15 +1,15 @@
+from __future__ import annotations
+
 from django.contrib import admin
 
-from .models import (
-    Cart,
-    Category,
-    Contact,
-    CustomerUser,
-    Gallery,
-    Order,
-    Product,
-    Supplier,
-)
+from .models import Cart
+from .models import Category
+from .models import Contact
+from .models import CustomerUser
+from .models import Gallery
+from .models import Order
+from .models import Product
+from .models import Supplier
 
 # Register your models here.
 admin.site.register(CustomerUser)

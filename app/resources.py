@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from import_export import resources
 
 from .models import Product

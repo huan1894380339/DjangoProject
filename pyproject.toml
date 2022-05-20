@@ -26,6 +26,7 @@ flake8 = "^4.0.1"
 black = "^22.3.0"
 add-trailing-comma = "^2.2.3"
 isort = "^5.10.1"
+update = "^0.0.1"
 
 [tool.poetry.dev-dependencies]
 
