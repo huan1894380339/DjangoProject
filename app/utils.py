@@ -56,9 +56,6 @@ def generate_refresh_token(user: CustomerUser) -> str:
 
 
 def get_list_path_images(path: str) -> list:
-    import ipdb
-
-    ipdb.set_trace()
     """
     Get list path images in local
     :params:
