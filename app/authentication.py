@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import jwt
-from rest_framework.authentication import BaseAuthentication
-from django.middleware.csrf import CsrfViewMiddleware
-from rest_framework import exceptions
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from rest_framework import exceptions
+from rest_framework.authentication import BaseAuthentication
+
+
 class SafeJWTAuthentication(BaseAuthentication):
     pass
 
@@ -18,7 +21,10 @@ class SafeJWTAuthentication(BaseAuthentication):
             # header = 'Token xxxxxxxxxxxxxxxxxxxxxxxx'
             access_token = authorization_heaader.split(' ')[1]
             payload = jwt.decode(
-                access_token, settings.SECRET_KEY, algorithms=['HS256'])
+                access_token,
+                settings.SECRET_KEY,
+                algorithms=['HS256'],
+            )
 
         except jwt.ExpiredSignatureError:
             raise exceptions.AuthenticationFailed('access_token expired')

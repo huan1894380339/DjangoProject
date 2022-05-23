@@ -9,9 +9,12 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+from __future__ import annotations
 
-from pathlib import Path
 import os
+from pathlib import Path
+
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -32,7 +35,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'gdstorage',
+    'import_export',
     'app',
 ]
 
@@ -72,27 +75,23 @@ TEMPLATES = [
     },
 ]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'app.authentication.SafeJWTAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': (
-#         'rest_framework.permissions.IsAuthenticated',
-#     ),
-#     }
-SECRET_KEY="my_secret_key"
-REFRESH_TOKEN_SECRET="my_refresh_secret_key"
+REST_FRAMEWORK = {
+    # 'DEFAULT_PAGINATION_CLASS': 'app.serializers.pagination.DefaultPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 3,
+}
+SECRET_KEY = 'my_secret_key'
+REFRESH_TOKEN_SECRET = 'my_refresh_secret_key'
 
 WSGI_APPLICATION = 'projectnew.wsgi.application'
 
 # Environment Variables
-import environ
 
 env = environ.Env()
 # reading .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Raises django's ImproperlyConfigured exception if SECRET_KEY not in os.environ
-SECRET_KEY = env("SECRET_KEY", default="unsafe-secret-key")
+SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -105,7 +104,7 @@ DATABASES = {
 # EMAIL_PORT = env('EMAIL_PORT')
 # EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 # EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-#config email server
+# config email server
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
@@ -156,11 +155,11 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL ='app.CustomerUser'
+AUTH_USER_MODEL = 'app.CustomerUser'
 
-#Django Google Drive Storage
+# Django Google Drive Storage
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = os.path.join(BASE_DIR, 'google_key.json')
-GOOGLE_DRIVE_STORAGE_SERVICE_EMAIL="huan.duong@kyanon.digital"
-GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'https://drive.google.com/drive/folders/1SwlpsY0a9eMSW53I7hRCD9S7RSUMKSPL' # OPTIONAL
-
-APPEND_SLASH=False
+GOOGLE_DRIVE_STORAGE_SERVICE_EMAIL = 'huanduong.tl@gmail.com'
+GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'https://drive.google.com/drive/folders/1paM-b29LRHpee_8m-wQ1xLdEdKorr-ZI'  # OPTIONAL
+# APPEND_SLASH=False
+IMPORT_EXPORT_USE_TRANSACTIONS = True
