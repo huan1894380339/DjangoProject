@@ -9,9 +9,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from app.constant import AnhChinh
-from app.constant import AnhPhu
-from app.models import Product
+from app.constant import AnhChinh, AnhPhu
+from app.models import Category, Product
 from app.serializers.gallery import GallerySerializer
 from app.serializers.pagination import DefaultPagination
 from app.serializers.product import CsvSerializer
@@ -36,9 +35,6 @@ class ImportProductFromCSV(GenericAPIView):
 
 class UploadImageProductFromPath(GenericAPIView):
     def post(self, request: Request) -> Response:
-        import ipdb
-
-        ipdb.set_trace()
         path = request.data['path']
         link_local = get_list_path_images(path)
         for ac_path in link_local.get(AnhChinh):
@@ -63,3 +59,10 @@ class UploadImageProductFromPath(GenericAPIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class GetListProductByCategory(GenericAPIView):
+    def get(self, request):
+        queryset = Category.objects.all()
+        serialize = GallerySerializer(queryset, many=True)
+        return Response(serialize.data)

@@ -76,9 +76,9 @@ TEMPLATES = [
 ]
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PAGINATION_CLASS': 'app.serializers.DefaultPagination'
+    # 'DEFAULT_PAGINATION_CLASS': 'app.serializers.pagination.DefaultPagination',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    'PAGE_SIZE': 3,
 }
 SECRET_KEY = 'my_secret_key'
 REFRESH_TOKEN_SECRET = 'my_refresh_secret_key'
