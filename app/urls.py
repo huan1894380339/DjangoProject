@@ -12,14 +12,14 @@ app_name = 'app'
 
 
 router = routers.DefaultRouter()
-router.register(r'manage-product', ProductInstance, basename='product')
+router.register(r'product/manage-product', ProductInstance, basename='product')
 urlpatterns = [
     # path('sign-up/', SignUp.as_view(), name='sign-up'),
     path(
-        'upload-images', UploadImageProductFromPath.as_view(),
+        'product/upload-images', UploadImageProductFromPath.as_view(),
         name='uploads-images/',
     ),
-    path('import-product-from-csv/', ImportProductFromCSV.as_view(), name='import'),
-    path('product/', include(router.urls)),
+    path('product/import-product-from-csv/', ImportProductFromCSV.as_view(), name='import'),
+    path('', include(router.urls)),
 ]
 urlpatterns = urlpatterns + router.urls
