@@ -3,6 +3,6 @@ from app.serializers.cartitem import CartItemSerializer
 from app.models import CartItem
 
 
-class CartItemInstance(ModelViewSet):
+class CartItemViewset(ModelViewSet):
     serializer_class = CartItemSerializer
     queryset = CartItem.objects.all()

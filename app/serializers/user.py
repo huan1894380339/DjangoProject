@@ -22,15 +22,8 @@ class RegisterSerializer(serializers.ModelSerializer):
                 'Someone with that email address has already registered. Was it you?',
             )
         if data['password'] != data['password2']:
-            raise serializers.ValidationError('Password confirm not match!aaa')
+            raise serializers.ValidationError('Password confirm not match!')
         return data
-    # def validate_email(self, email):
-    #     import ipdb
-    #     ipdb.set_trace()
-    #     existing = CustomerUser.objects.filter(email=email).first()
-    #     if existing:
-    #         raise serializers.ValidationError('Someone with that email address has already registered. Was it you?')
-    #     return email
 
     def save(self):
         account = CustomerUser(

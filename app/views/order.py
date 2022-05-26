@@ -5,12 +5,10 @@ from app.serializers.pagination import DefaultPagination
 from app.serializers.order import OrderDetailSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class ManageOrder(ModelViewSet):
     permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
     serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
     pagination_class = DefaultPagination

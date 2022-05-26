@@ -77,14 +77,11 @@ class GetListProductByCategory(GenericAPIView):
 
 class GetProductNew(generics.ListAPIView):
     serializer_class = ProductSerializer
-    queryset = Product.objects.raw(
-        'select * from app_product order by id desc limit 3',
-    )
-    # def list(self, request):
-    #     # Note the use of `get_queryset()` instead of `self.queryset`
-    #     queryset = self.get_queryset()
-    #     serializer = ProductSerializer(queryset, many=True)
-    #     return Response(serializer.data)
+
+    def list(self, request):
+        queryset = Product.objects.all().order_by('-id')[:10]
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class GetListnewProductByCategory(GenericAPIView):
@@ -92,8 +89,8 @@ class GetListnewProductByCategory(GenericAPIView):
 
     def post(self, request):
         category = Category.objects.get(title=request.data['category'])
-        queryset = Product.objects.raw(
-            'select * from app_product where category_id=%s order by id desc limit 3' % category.id,
-        )
-        serialize = ProductSerializer(queryset, many=True)
-        return Response(serialize.data)
+        queryset = Product.objects.filter(
+            category=category,
+        ).order_by('-id')[:10]
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)

@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from app.models import CustomerUser
 from app.serializers.user import RegisterSerializer, UserSerializer, SignInSerializer
-from app.utils import snake_case, get_code_verify
+from app.utils import send_email, get_code_verify
 from app.utils import get_tokens_for_user
 
 
@@ -25,7 +25,7 @@ class SignUp(GenericAPIView):
         serializers.is_valid(raise_exception=True)
         code_verify = get_code_verify()
         serializers.save()
-        snake_case(username, email, password, code_verify)
+        send_email(username, email, password, code_verify)
         return Response(status=status.HTTP_201_CREATED)
 
 
@@ -34,8 +34,6 @@ class SignIn(GenericAPIView):
         serializer = SignInSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = CustomerUser.objects.filter(email=request.data['email']).first()
-        import ipdb
-        ipdb.set_trace()
         token = get_tokens_for_user(user)
         return Response(token)
 

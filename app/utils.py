@@ -15,7 +15,7 @@ from projectnew.settings import EMAIL_HOST, REFRESH_TOKEN_SECRET, SECRET_KEY
 from .models import CustomerUser
 
 
-def snake_case(username, email, password, code_verify):
+def send_email(username, email, password, code_verify):
     to = email
     html_content = render_to_string(
         'mail.html',

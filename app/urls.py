@@ -8,15 +8,15 @@ from app.views.product import (
     UploadImageProductFromPath, GetListProductByCategory, GetProductNew, GetListnewProductByCategory,
 )
 from app.views.order import ManageOrder, GetAllOrderByUser
-from app.views.cartritem import CartItemInstance
+from app.views.cartritem import CartItemViewset
 app_name = 'app'
 
 router = routers.DefaultRouter()
-router.register(r'product/manage-product', ProductInstance, basename='product')
-router.register(r'order/manage-order', ManageOrder, basename='order')
+router.register(r'product/manage-product', ProductInstance)
+router.register(r'order/manage-order', ManageOrder)
 router.register(
     r'cartitem/manage-cartitem',
-    CartItemInstance, basename='cartitem',
+    CartItemViewset, basename='cartitem',
 )
 urlpatterns = [
     path('user/sign-up/', SignUp.as_view(), name='sign-up'),
