@@ -14,6 +14,7 @@ class CustomerUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(default='', max_length=10)
     address = models.CharField(default='', max_length=255)
+    # code_verify = models.CharField(max_length=255)
 
     def __str__(self) -> str:
         return self.username
@@ -23,6 +24,12 @@ class Membership(models.Model):
     customeruser = models.ForeignKey(CustomerUser, on_delete=models.Model)
     rank = models.IntegerField()
     voucher = models.IntegerField()
+
+    @property
+    def get_voucher(self):
+        all_order = self.order_user.all()
+        voucher = sum(order.cart_total for order in all_order) * 1e-8
+        return voucher
 
 
 class Contact(models.Model):
@@ -53,7 +60,7 @@ class Product(models.Model):
         upload_to='maps/', storage=gd_storage, blank=True,
     )
     description = models.TextField(default='')
-    price = models.IntegerField(default=0)
+    price = models.FloatField(default=0)
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -95,38 +102,10 @@ class Supplier(models.Model):
         return f'id:{self.id} - {self.product}'
 
 
-class Cart(models.Model):
-    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_completed = models.BooleanField(default=False)
-
-    def __str__(self):
-        return str(self.id)
-
-    def get_cart_total(self):
-        cartitem = self.cartitem_set.all()
-        total = sum(product.get_total for product in cartitem)
-        return total
-
-
-class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
-
-    def __str__(self):
-        return f'cart_id:{self.cart}'
-
-    @property
-    def get_total(self):
-        total = self.quantity * self.product.price
-        return total
-
-
 class Order(models.Model):
-    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        CustomerUser, on_delete=models.CASCADE, related_name='order_user',
+    )
     shiping_address = models.CharField(default='', max_length=255)
     order_decription = models.TextField(default='')
     # subtotal =models.FloatField(default=0)
@@ -137,3 +116,37 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    @property
+    def cart_total(self):
+        cartitem = self.orderitem.all()
+        total = sum(
+            product.item_total_after_apply_voucher()
+            for product in cartitem
+        )
+        return total
+
+
+class CartItem(models.Model):
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
+    order = models.ForeignKey(
+        Order, on_delete=models.CASCADE, related_name='orderitem',
+    )
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name='cartitem_product',
+    )
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return str(self.id)
+
+    @property
+    def item_total(self):
+        total = self.quantity * self.product.price
+        return total
+
+    def item_total_after_apply_voucher(self):
+        membership = Membership.objects.get(id=self.user.id)
+        total = self.quantity * self.product.price * \
+            ((100 - membership.voucher) / 100)
+        return total

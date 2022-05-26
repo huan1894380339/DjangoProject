@@ -5,8 +5,7 @@ import io
 
 from rest_framework import serializers
 
-from app.models import Category
-from app.models import Product
+from app.models import Category, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):

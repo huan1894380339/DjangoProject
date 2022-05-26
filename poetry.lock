@@ -263,6 +263,26 @@ django = ">=2.2"
 pytz = "*"
 
 [[package]]
+name = "djangorestframework-simplejwt"
+version = "5.2.0"
+description = "A minimal JSON Web Token authentication plugin for Django REST Framework"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+django = "*"
+djangorestframework = "*"
+pyjwt = ">=1.7.1,<3"
+
+[package.extras]
+dev = ["pytest-watch", "wheel", "twine", "ipython", "cryptography", "pytest-cov", "pytest-django", "pytest-xdist", "pytest", "tox", "flake8", "pep8", "isort", "Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)", "python-jose (==3.3.0)"]
+doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)"]
+lint = ["flake8", "pep8", "isort"]
+python-jose = ["python-jose (==3.3.0)"]
+test = ["cryptography", "pytest-cov", "pytest-django", "pytest-xdist", "pytest", "tox"]
+
+[[package]]
 name = "et-xmlfile"
 version = "1.1.0"
 description = "An implementation of lxml.xmlfile for the standard library"
@@ -463,17 +483,16 @@ test_extra = ["pytest (<7.1)", "pytest-asyncio", "testpath", "curio", "matplotli
 
 [[package]]
 name = "isort"
-version = "5.10.1"
+version = "5.8.0"
 description = "A Python utility / library to sort Python imports."
 category = "main"
 optional = false
-python-versions = ">=3.6.1,<4.0"
+python-versions = ">=3.6,<4.0"
 
 [package.extras]
 pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
 requirements_deprecated_finder = ["pipreqs", "pip-api"]
 colors = ["colorama (>=0.4.3,<0.5.0)"]
-plugins = ["setuptools"]
 
 [[package]]
 name = "jedi"
@@ -524,14 +543,6 @@ description = "Experimental type system extensions for programs checked with the
 category = "main"
 optional = false
 python-versions = "*"
-
-[[package]]
-name = "mysqlclient"
-version = "2.1.0"
-description = "Python interface to MySQL"
-category = "main"
-optional = false
-python-versions = ">=3.5"
 
 [[package]]
 name = "nodeenv"
@@ -1044,7 +1055,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "489016ab6394e46661d5a28d1a26be416611c9832d86c9a6d7f4bc1dcfb7f2b0"
+content-hash = "f6103623cfdeb2a347ab9b3115003c780edee9328ed3be93a21061857c69f9d3"
 
 [metadata.files]
 add-trailing-comma = [
@@ -1163,6 +1174,10 @@ djangorestframework = [
     {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},
     {file = "djangorestframework-3.13.1.tar.gz", hash = "sha256:0c33407ce23acc68eca2a6e46424b008c9c02eceb8cf18581921d0092bc1f2ee"},
 ]
+djangorestframework-simplejwt = [
+    {file = "djangorestframework_simplejwt-5.2.0-py3-none-any.whl", hash = "sha256:bcc4cb74dcb637ca1e17eed35276bd618ab19491f8c53e65dee6271177c355e8"},
+    {file = "djangorestframework_simplejwt-5.2.0.tar.gz", hash = "sha256:a60b09afb27d91ad1d7ac904cc632bd52cecead8f389f0fa1532ceb0fb757a74"},
+]
 et-xmlfile = [
     {file = "et_xmlfile-1.1.0-py3-none-any.whl", hash = "sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada"},
     {file = "et_xmlfile-1.1.0.tar.gz", hash = "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c"},
@@ -1219,8 +1234,8 @@ ipython = [
     {file = "ipython-8.3.0.tar.gz", hash = "sha256:807ae3cf43b84693c9272f70368440a9a7eaa2e7e6882dad943c32fbf7e51402"},
 ]
 isort = [
-    {file = "isort-5.10.1-py3-none-any.whl", hash = "sha256:6f62d78e2f89b4500b080fe3a81690850cd254227f27f75c3a0c491a1f351ba7"},
-    {file = "isort-5.10.1.tar.gz", hash = "sha256:e8443a5e7a020e9d7f97f1d7d9cd17c88bcb3bc7e218bf9cf5095fe550be2951"},
+    {file = "isort-5.8.0-py3-none-any.whl", hash = "sha256:2bb1680aad211e3c9944dbce1d4ba09a989f04e238296c87fe2139faa26d655d"},
+    {file = "isort-5.8.0.tar.gz", hash = "sha256:0a943902919f65c5684ac4e0154b1ad4fac6dcaa5d9f3426b732f1c8b5419be6"},
 ]
 jedi = [
     {file = "jedi-0.18.1-py2.py3-none-any.whl", hash = "sha256:637c9635fcf47945ceb91cd7f320234a7be540ded6f3e99a50cb6febdfd1ba8d"},
@@ -1240,13 +1255,6 @@ mccabe = [
 mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
-]
-mysqlclient = [
-    {file = "mysqlclient-2.1.0-cp310-cp310-win_amd64.whl", hash = "sha256:02c8826e6add9b20f4cb12dcf016485f7b1d6e30356a1204d05431867a1b3947"},
-    {file = "mysqlclient-2.1.0-cp37-cp37m-win_amd64.whl", hash = "sha256:b62d23c11c516cedb887377c8807628c1c65d57593b57853186a6ee18b0c6a5b"},
-    {file = "mysqlclient-2.1.0-cp38-cp38-win_amd64.whl", hash = "sha256:2c8410f54492a3d2488a6a53e2d85b7e016751a1e7d116e7aea9c763f59f5e8c"},
-    {file = "mysqlclient-2.1.0-cp39-cp39-win_amd64.whl", hash = "sha256:e6279263d5a9feca3e0edbc2b2a52c057375bf301d47da2089c075ff76331d14"},
-    {file = "mysqlclient-2.1.0.tar.gz", hash = "sha256:973235686f1b720536d417bf0a0d39b4ab3d5086b2b6ad5e6752393428c02b12"},
 ]
 nodeenv = [
     {file = "nodeenv-1.6.0-py2.py3-none-any.whl", hash = "sha256:621e6b7076565ddcacd2db0294c0381e01fd28945ab36bcf00f41c5daf63bef7"},
