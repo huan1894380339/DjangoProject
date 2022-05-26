@@ -8,14 +8,16 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework import generics
 
 from app.constant import AnhChinh, AnhPhu
 from app.models import Category, Product
 from app.serializers.gallery import GallerySerializer
 from app.serializers.pagination import DefaultPagination
-from app.serializers.product import CsvSerializer
-from app.serializers.product import ImgSerializer
-from app.serializers.product import ProductSerializer
+from app.serializers.product import (
+    CsvSerializer, ImgSerializer,
+    ProductSerializer,
+)
 from app.utils import get_list_path_images
 
 
@@ -26,10 +28,12 @@ class ProductInstance(ModelViewSet):
 
 
 class ImportProductFromCSV(GenericAPIView):
+    serializer_class = CsvSerializer
+
     def post(self, request):
-        serializer = CsvSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.create(request.data)
+        serializer_class = CsvSerializer(data=request.data)
+        if serializer_class.is_valid(raise_exception=True):
+            serializer_class.create(request.data)
             return Response(status=status.HTTP_200_OK)
 
 
@@ -62,7 +66,31 @@ class UploadImageProductFromPath(GenericAPIView):
 
 
 class GetListProductByCategory(GenericAPIView):
-    def get(self, request):
-        queryset = Category.objects.all()
-        serialize = GallerySerializer(queryset, many=True)
+    serializer_class = ProductSerializer
+
+    def post(self, request):
+        category = Category.objects.get(title=request.data['category'])
+        queryset = Product.objects.filter(category=category.id)
+        serialize = ProductSerializer(queryset, many=True)
         return Response(serialize.data)
+
+
+class GetProductNew(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def list(self, request):
+        queryset = Product.objects.all().order_by('-id')[:10]
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class GetListnewProductByCategory(GenericAPIView):
+    serializer_class = ProductSerializer
+
+    def post(self, request):
+        category = Category.objects.get(title=request.data['category'])
+        queryset = Product.objects.filter(
+            category=category,
+        ).order_by('-id')[:10]
+        serializer = ProductSerializer(queryset, many=True)
+        return Response(serializer.data)

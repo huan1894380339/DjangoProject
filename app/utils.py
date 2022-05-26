@@ -2,23 +2,24 @@ from __future__ import annotations
 
 import datetime
 import os
+import random
+import string
 
 import jwt
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from rest_framework_simplejwt.tokens import RefreshToken
+from projectnew.settings import EMAIL_HOST, REFRESH_TOKEN_SECRET, SECRET_KEY
 
 from .models import CustomerUser
-from projectnew.settings import EMAIL_HOST
-from projectnew.settings import REFRESH_TOKEN_SECRET
-from projectnew.settings import SECRET_KEY
 
 
-def snake_case(username, email, password):
+def send_email(username, email, password, code_verify):
     to = email
     html_content = render_to_string(
         'mail.html',
-        {'username': username, 'password': password},
+        {'username': username, 'password': password, 'code_verify': code_verify},
     )
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives('subject', text_content, EMAIL_HOST, [to])
@@ -78,3 +79,19 @@ def get_list_path_images(path: str) -> list:
                 (ap_direct + '/' + filename) for filename in os.listdir(ap_direct)
             ]
     return list_path_file_image
+
+
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
+
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
+
+
+def get_code_verify():
+    for i in range(3):
+        # get random string of length 6 without repeating letters
+        result_str = ''.join(random.sample(string.ascii_lowercase, 8))
+    return result_str
