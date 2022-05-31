@@ -5,6 +5,7 @@ from app.serializers.pagination import DefaultPagination
 from app.serializers.order import OrderDetailSerializer
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from app.authentication import IsTokenValid
 
 
 class ManageOrder(ModelViewSet):
@@ -22,6 +23,8 @@ class ManageOrder(ModelViewSet):
 
 
 class GetAllOrderByUser(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, IsTokenValid]
+
     def list(self, request):
         queryset = Order.objects.filter(user=request.data['user'])
         serializer = OrderDetailSerializer(queryset, many=True)

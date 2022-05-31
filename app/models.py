@@ -1,4 +1,5 @@
 from __future__ import annotations
+from django.utils import timezone
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -8,6 +9,7 @@ from gdstorage.storage import GoogleDriveStorage
 gd_storage = GoogleDriveStorage()
 
 # Create your models here.
+date_field = models.DateField(default=timezone.now)
 
 
 class CustomerUser(AbstractUser):
@@ -150,3 +152,14 @@ class CartItem(models.Model):
         total = self.quantity * self.product.price * \
             ((100 - membership.voucher) / 100)
         return total
+
+
+class BlackListedToken(models.Model):
+    token = models.CharField(max_length=500)
+    user = models.ForeignKey(
+        CustomerUser, related_name='token_user', on_delete=models.CASCADE,
+    )
+    timestamp = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('token', 'user')

@@ -11,15 +11,23 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework_simplejwt.tokens import RefreshToken
 from projectnew.settings import EMAIL_HOST, REFRESH_TOKEN_SECRET, SECRET_KEY
-
 from .models import CustomerUser
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.http import HttpResponse
 
 
-def send_email(username, email, password, code_verify):
-    to = email
+def send_email(user, current_site):
+    to = user.email
     html_content = render_to_string(
         'mail.html',
-        {'username': username, 'password': password, 'code_verify': code_verify},
+        {
+            'domain': current_site.domain, 'uid': urlsafe_base64_encode(
+                force_bytes(user.id),
+            ), 'token': default_token_generator.make_token(user),
+        },
     )
     text_content = strip_tags(html_content)
     email = EmailMultiAlternatives('subject', text_content, EMAIL_HOST, [to])
@@ -95,3 +103,17 @@ def get_code_verify():
         # get random string of length 6 without repeating letters
         result_str = ''.join(random.sample(string.ascii_lowercase, 8))
     return result_str
+
+
+def active(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = CustomerUser._default_manager.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
+        user = None
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')

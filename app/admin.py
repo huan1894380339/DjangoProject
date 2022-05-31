@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import (
     Category, Contact, CustomerUser, Gallery, Order,
-    Product, Supplier, CartItem, Membership,
+    Product, Supplier, CartItem, Membership, BlackListedToken,
 )
 
 # Register your models here.
@@ -16,6 +16,7 @@ admin.site.register(Supplier)
 admin.site.register(Category)
 admin.site.register(Gallery)
 admin.site.register(Membership)
+admin.site.register(BlackListedToken)
 
 
 class EventPhotosInline(admin.StackedInline):

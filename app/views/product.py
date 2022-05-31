@@ -9,7 +9,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import generics
-
+from rest_framework.permissions import IsAuthenticated
 from app.constant import AnhChinh, AnhPhu
 from app.models import Category, Product
 from app.serializers.gallery import GallerySerializer
@@ -66,6 +66,7 @@ class UploadImageProductFromPath(GenericAPIView):
 
 
 class GetListProductByCategory(GenericAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = ProductSerializer
 
     def post(self, request):

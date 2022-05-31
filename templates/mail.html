@@ -7,9 +7,13 @@
     <title>Document</title>
 </head>
 <body>
-    <a>hi</a>
-    <h1 style="background-color: rgb(158, 234, 240);">Username: {{username}}</h1>
-    <h1> Password: {{password}}</body>h1>
-    <h1 style="background-color: coral;">Code verify: {{code_verify}}</h1>
+    <section>
+        {% autoescape off %}
+            Hi {{ user.username }},
+            Please click on the link to confirm your registration,
+            <a href="http://{{domain}}{% url 'app:active' uidb64=uid token=token %}">Link active here</a>
+            If you think, it's not you, then just ignore this email.
+        {% endautoescape %}
+    </section>
 </body>
 </html>
