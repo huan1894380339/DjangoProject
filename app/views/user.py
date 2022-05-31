@@ -22,8 +22,6 @@ class ListUser(ModelViewSet):
 
 class SignUp(GenericAPIView):
     def post(self, request):
-        import ipdb
-        ipdb.set_trace()
         email = request.data['email']
         serializers = RegisterSerializer(data=request.data)
         serializers.is_valid(raise_exception=True)
@@ -56,8 +54,6 @@ class ChangePassword(UpdateAPIView):
     permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
-        import ipdb
-        ipdb.set_trace()
         user = request.user
         serializer_class = PasswordSerializer(
             instance=user, data={
@@ -73,8 +69,6 @@ class SignOut(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        import ipdb
-        ipdb.set_trace()
         try:
             refresh_token = request.data['refresh']
             access_token = request.META['HTTP_AUTHORIZATION'].split(' ')[1]

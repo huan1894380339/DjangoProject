@@ -26,8 +26,6 @@ class GetAllOrderByUser(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsTokenValid]
 
     def list(self, request):
-        import ipdb
-        ipdb.set_trace()
         queryset = Order.objects.filter(user=request.data['user'])
         serializer = OrderDetailSerializer(queryset, many=True)
         return Response(serializer.data)
