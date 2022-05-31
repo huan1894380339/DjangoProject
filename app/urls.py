@@ -9,6 +9,8 @@ from app.views.product import (
 )
 from app.views.order import ManageOrder, GetAllOrderByUser
 from app.views.cartritem import CartItemViewset
+from app.views.user import SignOut, ChangePassword
+from app.utils import active
 app_name = 'app'
 
 router = routers.DefaultRouter()
@@ -42,13 +44,22 @@ urlpatterns = [
         GetListnewProductByCategory.as_view(), name='Get List newProduct by Category',
     ),
     path(
-        'product/get-all-oder-by-user',
+        'order/get-all-oder-by-user',
         GetAllOrderByUser.as_view(), name='Get all order by user',
     ),
     path(
         'user/verify-acount', VerifyAcount.as_view(),
         name='Verify acount by code',
     ),
+    path(
+        'user/sign-out', SignOut.as_view(),
+        name='Sign Out',
+    ),
+    path(
+        'user/change-password', ChangePassword.as_view(),
+        name='Change Password',
+    ),
+    path('user/active/<uidb64>/<token>/', active, name='active'),
     path('', include(router.urls)),
 ]
 urlpatterns = urlpatterns + router.urls
