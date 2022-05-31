@@ -66,8 +66,7 @@ class PasswordSerializer(serializers.ModelSerializer):
         fields = ['password', 'new_password']
 
     def update(self, validated_data, instance):
-        import ipdb
-        ipdb.set_trace()
+
         if instance.check_password(self.validated_data['password']) is False:
             raise serializers.ValidationError('Old Password Incorrect')
         instance.set_password(self.validated_data['new_password'])

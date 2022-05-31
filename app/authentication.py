@@ -5,8 +5,7 @@ from django.core.exceptions import PermissionDenied
 
 class IsTokenValid(BasePermission):
     def has_permission(self, request, view):
-        import ipdb
-        ipdb.set_trace()
+
         user_id = request.user.id
         is_allowed_user = True
         token = request.headers.get('Authorization').split(' ')[1]

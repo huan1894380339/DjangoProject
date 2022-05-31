@@ -3,7 +3,7 @@ import jwt
 from projectnew import settings
 
 
-def cronjob_Blacklist():
+def cronjob_blacklist():
     for obj in BlackListedToken.objects.all():
         token = obj.token
         try:
