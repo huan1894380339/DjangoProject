@@ -23,8 +23,6 @@ class OrderViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        import ipdb
-        ipdb.set_trace()
         serializer = OrderSerializer(data=request.data['order'])
         serializer.is_valid()
         serializer.save()

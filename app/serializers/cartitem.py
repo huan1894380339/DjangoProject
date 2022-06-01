@@ -14,8 +14,6 @@ class CartItemForAddOrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def save(self):
-        import ipdb
-        ipdb.set_trace()
         order = Order.objects.get(id=self.context['order'])
         user = CustomerUser.objects.get(id=self.data['user'])
         product = Product.objects.get(id=self.data['user'])

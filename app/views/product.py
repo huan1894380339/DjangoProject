@@ -41,9 +41,7 @@ class ProductViewSet(ModelViewSet):
             product = Product.objects.filter(title=str(Path(i).stem)).first()
             serializer = ImgSerializer(instance=product, data={'path': i})
             serializer.is_valid(raise_exception=True)
-            print('111111111111')
             serializer.update(serializer.validated_data, product)
-            print('222222222222')
         for i in link_local.get('AnhPhu'):
             product = Product.objects.filter(
                 title=str(Path(i).stem).split('_')[0],

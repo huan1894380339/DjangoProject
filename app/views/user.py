@@ -45,7 +45,6 @@ class UserViewSet(GenericViewSet):
         serializer.is_valid(raise_exception=True)
         user = CustomerUser.objects.filter(email=request.data['email']).first()
         login(request, user)
-        print('IsAuthenticated', user.is_authenticated)
         token = get_tokens_for_user(user)
         return Response(token)
 
