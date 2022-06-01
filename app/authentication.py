@@ -1,11 +1,10 @@
 from app.models import BlackListedToken
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import PermissionDenied
 
 
-class IsTokenValid(BasePermission):
+class IsTokenValid(IsAuthenticated):
     def has_permission(self, request, view):
-
         user_id = request.user.id
         is_allowed_user = True
         token = request.headers.get('Authorization').split(' ')[1]
