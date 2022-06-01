@@ -4,7 +4,7 @@ import csv
 import io
 
 from rest_framework import serializers
-
+from django.core.files import File
 from app.models import Category, Product
 
 
@@ -23,10 +23,12 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
 
-class ImgSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['img_product']
+class ImgSerializer(serializers.Serializer):
+    path = serializers.CharField(max_length=255)
+
+    def update(self, validated_data, instance):
+        instance.img_product = File(open(self.validated_data['path'], 'rb'))
+        instance.save()
 
 
 class CsvSerializer(serializers.Serializer):

@@ -4,12 +4,12 @@ from app.models import Order
 from app.serializers.pagination import DefaultPagination
 from app.serializers.order import OrderDetailSerializer
 from app.authentication import IsTokenValid
-from app.serializers.cartitem import CartItemSerializerForAddOrder
+from app.serializers.cartitem import CartItemForAddOrderSerializer
 from app.serializers.order import OrderSerializer
 from rest_framework.decorators import action
 
 
-class ManageOrder(ModelViewSet):
+class OrderViewSet(ModelViewSet):
     # permission_classes = [IsAuthenticated]
     serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
@@ -23,14 +23,19 @@ class ManageOrder(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
+        import ipdb
+        ipdb.set_trace()
         serializer = OrderSerializer(data=request.data['order'])
         serializer.is_valid()
         serializer.save()
+        order_id = serializer.data['id']
         for item in request.data['cartitems']:
-            serializer = CartItemSerializerForAddOrder(data=item)
+            serializer = CartItemForAddOrderSerializer(
+                data=item, context={'order': order_id},
+            )
             serializer.is_valid()
             serializer.save()
-            return Response({'message': 'succes'})
+        return Response({'message': 'success'})
 
     @action(detail=False, methods=['get'], permission_classes=[IsTokenValid])
     def all_order_by_user(self, request):

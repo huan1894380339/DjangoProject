@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from app.constant import AnhChinh, AnhPhu
 from app.models import Category, Product
 from app.serializers.gallery import GallerySerializer
 from app.serializers.product import (
@@ -29,32 +28,30 @@ class ProductViewSet(ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def import_product_csv(self, request):
-        serializer_class = self.get_serializer_class()(data=request.data)
-        if serializer_class.is_valid(raise_exception=True):
-            serializer_class.create(request.data)
-            return Response(status=status.HTTP_200_OK)
+        serializer_class = self.get_serializer(data=request.data)
+        serializer_class.is_valid(raise_exception=True)
+        serializer_class.create(request.data)
+        return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def img_product_from_path(self, request: Request) -> Response:
         path = request.data['path']
         link_local = get_list_path_images(path)
-        for ac_path in link_local.get(AnhChinh):
-            product = Product.objects.filter(title=Path(ac_path).stem).first()
-            img_product = File(open(ac_path, 'rb'))
-            serializer = ImgSerializer(
-                instance=product,
-                data={'img_product': img_product},
-            )
+        for i in link_local.get('AnhChinh'):
+            product = Product.objects.filter(title=str(Path(i).stem)).first()
+            serializer = ImgSerializer(instance=product, data={'path': i})
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-        for ap_path in link_local.get(AnhPhu):
+            print('111111111111')
+            serializer.update(serializer.validated_data, product)
+            print('222222222222')
+        for i in link_local.get('AnhPhu'):
             product = Product.objects.filter(
-                title=str(Path(ap_path).stem).split('_')[0],
+                title=str(Path(i).stem).split('_')[0],
             ).first()
             serializer = GallerySerializer(
                 data={
                     'product': product.id,
-                    'img_product': File(open(ap_path, 'rb')),
+                    'img_product': File(open(i, 'rb')),
                 },
             )
             serializer.is_valid(raise_exception=True)
@@ -67,7 +64,7 @@ class ProductViewSet(ModelViewSet):
         queryset = Product.objects.filter(
             category=category,
         ).order_by('-id')[:10]
-        serializer = self.get_serializer_class()(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['post'])

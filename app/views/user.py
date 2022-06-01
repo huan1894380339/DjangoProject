@@ -26,11 +26,12 @@ class UserViewSet(GenericViewSet):
             return SignInSerializer
         if self.action == 'change_password':
             return PasswordSerializer
+        return UserSerializer
 
     @action(detail=False, methods=['post'])
     def sign_up(self, request):
         email = request.data['email']
-        serializers = self.get_serializer_class()(data=request.data)
+        serializers = self.get_serializer(data=request.data)
         serializers.is_valid(raise_exception=True)
         serializers.save()
         user = CustomerUser.objects.get(email=email)
@@ -40,7 +41,7 @@ class UserViewSet(GenericViewSet):
 
     @action(detail=False, methods=['post'])
     def sign_in(self, request):
-        serializer = self.get_serializer_class()(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = CustomerUser.objects.filter(email=request.data['email']).first()
         login(request, user)
@@ -51,7 +52,7 @@ class UserViewSet(GenericViewSet):
     @action(detail=False, methods=['put'], permission_classes=[IsAuthenticated])
     def change_password(self, request):
         user = request.user
-        serializer_class = self.get_serializer_class()(
+        serializer_class = self.get_serializer(
             instance=user, data={
                 'new_password': request.data['new_password'], 'password': request.data['password'],
             },
@@ -60,7 +61,7 @@ class UserViewSet(GenericViewSet):
         serializer_class.update(serializer_class.validated_data, user)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
     def sign_out(self, request):
         try:
             refresh_token = request.data['refresh']

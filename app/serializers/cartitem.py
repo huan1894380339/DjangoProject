@@ -8,13 +8,15 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class CartItemSerializerForAddOrder(serializers.ModelSerializer):
+class CartItemForAddOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = '__all__'
 
     def save(self):
-        order = Order.objects.filter(user=self.data['user']).last()
+        import ipdb
+        ipdb.set_trace()
+        order = Order.objects.get(id=self.context['order'])
         user = CustomerUser.objects.get(id=self.data['user'])
         product = Product.objects.get(id=self.data['user'])
         cartitem = CartItem(
