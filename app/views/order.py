@@ -3,13 +3,14 @@ from rest_framework.viewsets import ModelViewSet
 from app.models import Order
 from app.serializers.pagination import DefaultPagination
 from app.serializers.order import OrderDetailSerializer
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from app.authentication import IsTokenValid
+from app.serializers.cartitem import CartItemForAddOrderSerializer
+from app.serializers.order import OrderSerializer
+from rest_framework.decorators import action
 
 
-class ManageOrder(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+class OrderViewSet(ModelViewSet):
+    # permission_classes = [IsAuthenticated]
     serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
     pagination_class = DefaultPagination
@@ -21,11 +22,21 @@ class ManageOrder(ModelViewSet):
         serializer = OrderDetailSerializer(order)
         return Response(serializer.data)
 
+    def create(self, request):
+        serializer = OrderSerializer(data=request.data['order'])
+        serializer.is_valid()
+        serializer.save()
+        order_id = serializer.data['id']
+        for item in request.data['cartitems']:
+            serializer = CartItemForAddOrderSerializer(
+                data=item, context={'order': order_id},
+            )
+            serializer.is_valid()
+            serializer.save()
+        return Response({'message': 'success'})
 
-class GetAllOrderByUser(generics.ListAPIView):
-    permission_classes = [IsAuthenticated, IsTokenValid]
-
-    def list(self, request):
-        queryset = Order.objects.filter(user=request.data['user'])
+    @action(detail=False, methods=['get'], permission_classes=[IsTokenValid])
+    def all_order_by_user(self, request):
+        queryset = Order.objects.filter(user=request.user)
         serializer = OrderDetailSerializer(queryset, many=True)
         return Response(serializer.data)

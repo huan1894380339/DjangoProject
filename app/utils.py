@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import datetime
 import os
-import random
-import string
 
 import jwt
 from django.core.mail import EmailMultiAlternatives
@@ -96,13 +94,6 @@ def get_tokens_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
-
-
-def get_code_verify():
-    for i in range(3):
-        # get random string of length 6 without repeating letters
-        result_str = ''.join(random.sample(string.ascii_lowercase, 8))
-    return result_str
 
 
 def active(request, uidb64, token):

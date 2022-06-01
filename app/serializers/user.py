@@ -4,7 +4,6 @@ from django.db.models import Q
 from rest_framework import serializers
 
 from app.models import CustomerUser
-from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -71,14 +70,3 @@ class PasswordSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Old Password Incorrect')
         instance.set_password(self.validated_data['new_password'])
         instance.save()
-
-
-class LogoutSerializer(serializers.Serializer):
-    refresh = serializers.CharField(max_length=255)
-    access = serializers.CharField(max_length=255)
-
-    def save(self):
-        try:
-            RefreshToken(self.token).blacklist()
-        except TokenError:
-            self.fail('bad_token')
