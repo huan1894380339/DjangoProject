@@ -27,7 +27,7 @@ class ImgSerializer(serializers.Serializer):
     path = serializers.CharField(max_length=255)
 
     def update(self, validated_data, instance):
-        instance.img_product = File(open(self.validated_data['path'], 'rb'))
+        instance.img_product = File(open(validated_data['path'], 'rb'))
         instance.save()
 
 

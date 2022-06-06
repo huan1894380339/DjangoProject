@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'import_export',
     'django_crontab',
+    'django_celery_beat',
+    'django_celery_results',
     'app',
 ]
 
@@ -181,3 +183,18 @@ SIMPLE_JWT = {
 CRONJOBS = [
     ('*/30 * * * *', 'app.cron.cronjob_Blacklist'),
 ]
+
+# CELERY STUFF
+BROKER_URL = 'redis://localhost:6379'
+
+#  Celery
+# BROKER_URL = env("CELERY_BROKER_URL", default="django://")
+# CELERYD_MAX_TASKS_PER_CHILD = 100
+CELERYD_MAX_TASKS_PER_CHILD = 1000
+CELERYD_TASK_SOFT_TIME_LIMIT = 2400  # 40 minutes
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_IGNORE_RESULT = False
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'

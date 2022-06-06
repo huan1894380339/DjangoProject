@@ -1,18 +1,15 @@
 from __future__ import annotations
 
-from pathlib import Path
-
-from django.core.files import File
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from app.models import Category, Product
-from app.serializers.gallery import GallerySerializer
 from app.serializers.product import (
-    CsvSerializer, ImgSerializer,
+    CsvSerializer,
     ProductSerializer,
 )
+from app.tasks import upload_image_task
 from app.utils import get_list_path_images
 from rest_framework.decorators import action
 
@@ -37,43 +34,31 @@ class ProductViewSet(ModelViewSet):
     def img_product_from_path(self, request: Request) -> Response:
         path = request.data['path']
         link_local = get_list_path_images(path)
-        for i in link_local.get('AnhChinh'):
-            product = Product.objects.filter(title=str(Path(i).stem)).first()
-            serializer = ImgSerializer(instance=product, data={'path': i})
-            serializer.is_valid(raise_exception=True)
-            serializer.update(serializer.validated_data, product)
-        for i in link_local.get('AnhPhu'):
-            product = Product.objects.filter(
-                title=str(Path(i).stem).split('_')[0],
-            ).first()
-            serializer = GallerySerializer(
-                data={
-                    'product': product.id,
-                    'img_product': File(open(i, 'rb')),
-                },
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+        upload_image_task.delay(link_local)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['get'])
     def list_product_by_category(self, request):
-        category = Category.objects.get(title=request.data['category'])
+        category = Category.objects.get(
+            title=request.query_params.get('category'),
+        )
         queryset = Product.objects.filter(
             category=category,
         ).order_by('-id')[:10]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['get'])
     def new_product(self, request):
         queryset = Product.objects.all().order_by('-id')[:10]
         serializer = ProductSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['get'])
     def list_new_product_by_category(self, request):
-        category = Category.objects.get(title=request.data['category'])
+        category = Category.objects.get(
+            title=request.query_params.get('category'),
+        )
         queryset = Product.objects.filter(
             category=category,
         ).order_by('-id')[:10]
