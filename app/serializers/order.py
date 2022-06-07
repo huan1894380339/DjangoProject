@@ -22,7 +22,9 @@ class CartItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_voucher(self, instance):
-        membership = Membership.objects.get(customeruser=instance.user.id)
+        membership = Membership.objects.filter(
+            customeruser=instance.user.id,
+        ).first()
         return '%s%s' % (membership.voucher, '%')
 
 
@@ -31,7 +33,10 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['user', 'cartitems', 'cart_total']
+        fields = [
+            'user', 'status', 'cartitems',
+            'shiping_address', 'phone', 'created_at', 'cart_total',
+        ]
 
     def get_cartitems(self, obj: Order):
         queryset = obj.orderitem.all().select_related('product')
@@ -42,3 +47,37 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+    def validate_status(self, status):
+        order = self.instance
+        if order.status not in ['N', 'Co']:
+            raise serializers.ValidationError(
+                'Your order has been delivered to the shipping unit, Cannot cancel',
+            )
+        if status in ['Co', 'R', 'S']:
+            raise serializers.ValidationError('Your do not permission')
+        return status
+
+    def validate_phone(self, phone):
+        order = self.instance
+        if order.status not in ['N']:
+            raise serializers.ValidationError(
+                'Just edit when order status is New',
+            )
+        return phone
+
+    def validate_shiping_address(self, shiping_address):
+        order = self.instance
+        if order.status not in ['N']:
+            raise serializers.ValidationError(
+                'Just edit when status Order is New',
+            )
+        return shiping_address
+
+    def validate_order_decription(self, order_decription):
+        order = self.instance
+        if order.status not in ['N']:
+            raise serializers.ValidationError(
+                'Just edit when status Order is New',
+            )
+        return order_decription

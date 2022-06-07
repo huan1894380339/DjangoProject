@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
-
+from app.constant import ITEM_STATUS
 # Define Google Drive Storage
 gd_storage = GoogleDriveStorage()
 
@@ -115,6 +115,7 @@ class Order(models.Model):
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(choices=ITEM_STATUS, max_length=2, default='N')
 
     def __str__(self):
         return str(self.id)
@@ -148,7 +149,9 @@ class CartItem(models.Model):
         return total
 
     def item_total_after_apply_voucher(self):
-        membership = Membership.objects.get(id=self.user.id)
+        membership = Membership.objects.filter(
+            customeruser=self.user.id,
+        ).first()
         total = self.quantity * self.product.price * \
             ((100 - membership.voucher) / 100)
         return total

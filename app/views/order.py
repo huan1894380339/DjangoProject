@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from uritemplate import partial
 from app.models import Order
 from app.serializers.pagination import DefaultPagination
 from app.serializers.order import OrderDetailSerializer
@@ -7,10 +8,11 @@ from app.authentication import IsTokenValid
 from app.serializers.cartitem import CartItemForAddOrderSerializer
 from app.serializers.order import OrderSerializer
 from rest_framework.decorators import action
+from rest_framework import status
 
 
 class OrderViewSet(ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsTokenValid]
     serializer_class = OrderDetailSerializer
     queryset = Order.objects.all()
     pagination_class = DefaultPagination
@@ -34,6 +36,22 @@ class OrderViewSet(ModelViewSet):
             serializer.is_valid()
             serializer.save()
         return Response({'message': 'success'})
+
+    def partial_update(self, request, pk=None):
+        order = self.get_object()
+        serializer = OrderSerializer(order, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        instance = self.get_object()
+        serializer = OrderSerializer(
+            instance, data=request.data, partial=partial,
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
 
     @action(detail=False, methods=['get'], permission_classes=[IsTokenValid])
     def all_order_by_user(self, request):
