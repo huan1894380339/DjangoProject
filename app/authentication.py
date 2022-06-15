@@ -7,6 +7,10 @@ class IsTokenValid(IsAuthenticated):
     def has_permission(self, request, view):
         user_id = request.user.id
         is_allowed_user = True
+        if request.headers.get('Authorization') is None:
+            raise PermissionDenied(
+                'Authentication credentials were not provided',
+            )
         token = request.headers.get('Authorization').split(' ')[1]
         try:
             is_blackListed = BlackListedToken.objects.get(

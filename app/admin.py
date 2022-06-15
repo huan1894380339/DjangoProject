@@ -7,11 +7,16 @@ from .models import (
     Product, Supplier, CartItem, Membership, BlackListedToken,
 )
 
+
+class OrderAdmin(admin.ModelAdmin):
+    readonly_fields = ('created_at', 'updated_at')
+
+
 # Register your models here.
 admin.site.register(CustomerUser)
 admin.site.register(Contact)
 admin.site.register(CartItem)
-admin.site.register(Order)
+admin.site.register(Order, OrderAdmin)
 admin.site.register(Supplier)
 admin.site.register(Category)
 admin.site.register(Gallery)
