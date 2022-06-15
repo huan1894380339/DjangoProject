@@ -5,6 +5,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
 from app.constant import ITEM_STATUS
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 # Define Google Drive Storage
 gd_storage = GoogleDriveStorage()
 
@@ -25,7 +28,7 @@ class CustomerUser(AbstractUser):
 class Membership(models.Model):
     customeruser = models.ForeignKey(CustomerUser, on_delete=models.Model)
     rank = models.IntegerField()
-    voucher = models.IntegerField()
+    voucher = models.FloatField()
 
     @property
     def get_voucher(self):
@@ -45,9 +48,9 @@ class Contact(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(default='', max_length=200)
-    slug = models.CharField(default='', max_length=100)
-    description = models.TextField(default='')
+    title = models.CharField(blank=False, null=False, max_length=200)
+    slug = models.CharField(blank=False, null=False, max_length=100)
+    description = models.TextField(blank=False, null=False)
     active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -57,16 +60,21 @@ class Category(models.Model):
 class Product(models.Model):
     code = models.CharField(max_length=10)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    title = models.CharField(default='', max_length=200)
+    title = models.CharField(
+        blank=False, null=False,
+        max_length=200, unique=True,
+    )
     img_product = models.FileField(
         upload_to='maps/', storage=gd_storage, blank=True,
     )
-    description = models.TextField(default='')
-    price = models.FloatField(default=0)
+    description = models.TextField(blank=False, null=False)
+    price = models.FloatField(
+        validators=[MinValueValidator(1), MaxValueValidator(2000)],
+    )
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.title
+        return '%s id:%s' % (self.title, str(self.id))
 
     @property
     def img_url(self):
@@ -78,7 +86,8 @@ class Product(models.Model):
 class Discount(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     day_start = models.DateTimeField()
-    day_end = models.DateField()
+    day_end = models.DateTimeField()
+    value_discount = models.IntegerField()
 
 
 class Gallery(models.Model):
@@ -93,7 +102,7 @@ class Gallery(models.Model):
 
 
 class Supplier(models.Model):
-    name_supplier = models.CharField(default='', max_length=200)
+    name_supplier = models.CharField(blank=False, null=False, max_length=200)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     price = models.IntegerField(default=0)
     sale_price = models.IntegerField(default=0)
@@ -108,14 +117,14 @@ class Order(models.Model):
     user = models.ForeignKey(
         CustomerUser, on_delete=models.CASCADE, related_name='order_user',
     )
-    shiping_address = models.CharField(default='', max_length=255)
-    order_decription = models.TextField(default='')
+    shiping_address = models.CharField(blank=False, null=False, max_length=255)
+    order_decription = models.TextField(blank=False, null=False)
     # subtotal =models.FloatField(default=0)
     phone = models.CharField(null=True, max_length=255)
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(choices=ITEM_STATUS, max_length=2, default='N')
+    status = models.CharField(choices=ITEM_STATUS, max_length=2, default='NE')
 
     def __str__(self):
         return str(self.id)
@@ -149,7 +158,7 @@ class CartItem(models.Model):
         return total
 
     def item_total_after_apply_voucher(self):
-        membership = Membership.objects.filter(
+        membership = Membership.objects.select_related('customeruser').filter(
             customeruser=self.user.id,
         ).first()
         total = self.quantity * self.product.price * \
@@ -166,3 +175,12 @@ class BlackListedToken(models.Model):
 
     class Meta:
         unique_together = ('token', 'user')
+
+
+@receiver(post_save, sender=Order, dispatch_uid='update_voucher')
+def update_voucher(sender, instance, **kwargs):
+    membership = Membership.objects.get(customeruser=instance.user.id)
+    all_order = Order.objects.filter(user=instance.user, status='SE')
+    voucher = (sum(order.cart_total for order in all_order) * 1e-8) * 100
+    membership.voucher = voucher
+    membership.save()
