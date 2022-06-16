@@ -13,6 +13,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='status',
-            field=models.CharField(choices=[('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), ('RE', 'Received'), ('SU', 'Success'), ('CA', 'Cancel')], default='NE', max_length=2),
+            field=models.CharField(
+                choices=[
+                    ('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), (
+                        'RE', 'Received',
+                    ), ('SU', 'Success'), ('CA', 'Cancel'),
+                ], default='NE', max_length=2,
+            ),
         ),
     ]

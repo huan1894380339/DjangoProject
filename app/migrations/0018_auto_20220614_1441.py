@@ -39,7 +39,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='status',
-            field=models.CharField(choices=[('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), ('RE', 'Received'), ('SU', 'Success'), ('CA', 'Cancel')], default='N', max_length=2),
+            field=models.CharField(
+                choices=[
+                    ('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), (
+                        'RE', 'Received',
+                    ), ('SU', 'Success'), ('CA', 'Cancel'),
+                ], default='N', max_length=2,
+            ),
         ),
         migrations.AlterField(
             model_name='product',
@@ -49,7 +55,13 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='product',
             name='price',
-            field=models.FloatField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(2000)]),
+            field=models.FloatField(
+                validators=[
+                    django.core.validators.MinValueValidator(
+                        1,
+                    ), django.core.validators.MaxValueValidator(2000),
+                ],
+            ),
         ),
         migrations.AlterField(
             model_name='product',

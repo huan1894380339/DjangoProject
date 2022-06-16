@@ -1,11 +1,11 @@
-import tempfile
-from unicodedata import category
 import factory
 from faker import Faker
 from app.models import Product
 
 
 facker = Faker()
+
+
 class ProductFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Product
@@ -13,6 +13,6 @@ class ProductFactory(factory.django.DjangoModelFactory):
     category = facker.word()
     title = facker.text(max_nb_chars=20)
     img_product = facker.file_name(category='image')
-    description =  ""
+    description = ''
     price = facker.random_int(min=1000, max=2000)
     active = True

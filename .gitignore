@@ -90,3 +90,6 @@ db.sqlite3
 .vscode/*
 .history/
 *.vsix
+#static file
+*.pdf
+*.csv

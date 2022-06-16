@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 import os
-
 import jwt
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -17,6 +16,8 @@ from django.utils.http import urlsafe_base64_decode
 from django.http import HttpResponse
 from json2html import json2html
 import pdfkit
+import io
+from PIL import Image
 
 
 def send_email(user, current_site, html):
@@ -104,7 +105,7 @@ def active(request, uidb64, token):
         user = CustomerUser._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
-    if user is not None and default_token_generator.check_token(user, token):
+    if not user and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
@@ -118,7 +119,7 @@ def reset_password(request, uidb64, token):
         user = CustomerUser._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
-    if user is not None and default_token_generator.check_token(user, token):
+    if not user and default_token_generator.check_token(user, token):
         password = CustomerUser.objects.make_random_password()
         user.set_password(password)
         user.save()
@@ -140,3 +141,12 @@ class PdfConverter(object):
             wkhtmltopdf='C:/Program Files/wkhtmltopdf/bin/wkhtmltopdf.exe',
         )
         return pdfkit.from_string(html_str, None, configuration=config)
+
+
+def factory_img():
+    image_file = io.BytesIO()
+    image = Image.new('RGBA', size=(50, 50), color=(256, 0, 0))
+    image.save(image_file, 'png')  # or whatever format you prefer
+    image_file.name = 'test.png'
+    image_file.seek(0)
+    return image_file
