@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from .models import (
     Category, Contact, CustomerUser, Gallery, Order,
-    Product, Supplier, CartItem, Membership, BlackListedToken,
+    Product, Supplier, CartItem, Membership, BlackListedToken, Discount,
 )
 
 
@@ -21,6 +21,7 @@ admin.site.register(Supplier)
 admin.site.register(Category)
 admin.site.register(Gallery)
 admin.site.register(Membership)
+admin.site.register(Discount)
 admin.site.register(BlackListedToken)
 
 

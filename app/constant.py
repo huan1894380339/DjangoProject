@@ -4,9 +4,10 @@ AnhChinh = 'AnhChinh'
 AnhPhu = 'AnhPhu'
 
 ITEM_STATUS = (
-    ('N', 'New'),
-    ('Co', 'Confirmed'),
-    ('S', 'Shipped Out'),
-    ('R', 'Received'),
-    ('Ca', 'Cancel'),
+    ('NE', 'New'),
+    ('CO', 'Confirmed'),
+    ('SH', 'Shipped Out'),
+    ('RE', 'Received'),
+    ('SU', 'Success'),
+    ('CA', 'Cancel'),
 )

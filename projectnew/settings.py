@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'django_celery_beat',
     'django_celery_results',
+    'debug_toolbar',
     'app',
 ]
 
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'projectnew.urls'
@@ -118,8 +120,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'huanduong.tl@gmail.com'
-EMAIL_HOST_PASSWORD = 'huan12345'
+EMAIL_HOST_USER = 'huan.duong@kyanon.digital'
+EMAIL_HOST_PASSWORD = 'leypdkzmjmtdsoxi'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -198,3 +200,14 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
+
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'projectnew.utils.show_toolbar',
+}

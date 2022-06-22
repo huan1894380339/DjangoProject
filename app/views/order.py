@@ -3,7 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from uritemplate import partial
 from app.models import Order
 from app.serializers.pagination import DefaultPagination
-from app.serializers.order import OrderDetailSerializer
+from app.serializers.order import OrderDetailSerializer, OrderAddSerializer
 from app.authentication import IsTokenValid
 from app.serializers.cartitem import CartItemForAddOrderSerializer
 from app.serializers.order import OrderSerializer
@@ -18,14 +18,14 @@ class OrderViewSet(ModelViewSet):
     pagination_class = DefaultPagination
 
     def retrieve(self, request, pk=None):
-        order = Order.objects.filter(
+        order = Order.objects.prefetch_related('orderitem').select_related('user').filter(
             id=pk,
-        ).prefetch_related('orderitem').first()
+        ).first()
         serializer = OrderDetailSerializer(order)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = OrderSerializer(data=request.data['order'])
+        serializer = OrderAddSerializer(data=request.data['order'])
         serializer.is_valid()
         serializer.save()
         order_id = serializer.data['id']

@@ -22,7 +22,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_voucher(self, instance):
-        membership = Membership.objects.filter(
+        membership = Membership.objects.select_related('customeruser').filter(
             customeruser=instance.user.id,
         ).first()
         return '%s%s' % (membership.voucher, '%')
@@ -39,8 +39,8 @@ class OrderDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_cartitems(self, obj: Order):
-        queryset = obj.orderitem.all().select_related('product')
-        return CartItemSerializer(queryset, context={'user': obj.user}, many=True).data
+        queryset = obj.orderitem.all()
+        return CartItemSerializer(queryset, many=True).data
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -50,17 +50,17 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def validate_status(self, status):
         order = self.instance
-        if order.status not in ['N', 'Co']:
+        if order.status not in ['NE', 'CO']:
             raise serializers.ValidationError(
                 'Your order has been delivered to the shipping unit, Cannot cancel',
             )
-        if status in ['Co', 'R', 'S']:
+        if status in ['CO', 'RE', 'SH']:
             raise serializers.ValidationError('Your do not permission')
         return status
 
     def validate_phone(self, phone):
         order = self.instance
-        if order.status not in ['N']:
+        if order.status not in ['NE']:
             raise serializers.ValidationError(
                 'Just edit when order status is New',
             )
@@ -68,7 +68,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def validate_shiping_address(self, shiping_address):
         order = self.instance
-        if order.status not in ['N']:
+        if order.status not in ['NE']:
             raise serializers.ValidationError(
                 'Just edit when status Order is New',
             )
@@ -76,8 +76,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def validate_order_decription(self, order_decription):
         order = self.instance
-        if order.status not in ['N']:
+        if order.status not in ['NE']:
             raise serializers.ValidationError(
                 'Just edit when status Order is New',
             )
         return order_decription
+
+
+class OrderAddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = '__all__'
