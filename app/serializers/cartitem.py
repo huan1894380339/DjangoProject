@@ -16,7 +16,7 @@ class CartItemForAddOrderSerializer(serializers.ModelSerializer):
     def save(self):
         order = Order.objects.get(id=self.context['order'])
         user = CustomerUser.objects.get(id=self.data['user'])
-        product = Product.objects.get(id=self.data['user'])
+        product = Product.objects.get(id=self.data['product'])
         cartitem = CartItem(
             user=user,
             product=product,

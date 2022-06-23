@@ -36,7 +36,7 @@ class UserViewSet(GenericViewSet):
         serializers.save()
         user = CustomerUser.objects.get(email=email)
         current_site = get_current_site(request)
-        send_email(user, current_site)
+        send_email(user, current_site, html='mail.html')
         return Response(status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['post'])
@@ -74,3 +74,10 @@ class UserViewSet(GenericViewSet):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['post'])
+    def reset_password(self, request):
+        user = CustomerUser.objects.get(email=request.data['email'])
+        current_site = get_current_site(request)
+        send_email(user, current_site, html='mail_reset_password.html')
+        return Response({'message': 'Check your email'})
