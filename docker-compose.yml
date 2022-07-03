@@ -38,19 +38,9 @@ services:
   celery:
     restart: always
     build: .
-    command: celery -A projectnew worker -P gevent -c 10 -l info
+    command: celery -A projectnew worker -l INFO
     volumes:
       - .:/app
-    environment:
-      - BROKER_URL = 'redis://redis:6379'
-      - CELERYD_MAX_TASKS_PER_CHILD = 1000
-      - CELERYD_TASK_SOFT_TIME_LIMIT = 2400
-      - CELERY_RESULT_BACKEND = 'django-db'
-      - CELERY_IGNORE_RESULT = False
-      - CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-      - CELERY_ACCEPT_CONTENT = ['application/json']
-      - CELERY_RESULT_SERIALIZER = 'json'
-      - CELERY_TASK_SERIALIZER = 'json'
     env_file:
       - ./.env
     depends_on:
