@@ -30,7 +30,8 @@ SECRET_KEY = 'django-insecure-h2#5jan5bz=2ap@&i&_&#lagamshmkju)wa*y(i%pmbce5f&v4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS =  ['*']
 
 
 # Application definition
@@ -120,7 +121,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'huan.duong@kyanon.digital'
+# EMAIL_HOST_USER = 'huan.duong@kyanon.digital'
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = 'leypdkzmjmtdsoxi'
 
 # Password validation
@@ -187,8 +189,9 @@ CRONJOBS = [
 ]
 
 # CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
-
+# local
+# BROKER_URL = 'redis://localhost:6379'
+BROKER_URL = 'redis://redis:6379'
 #  Celery
 # BROKER_URL = env("CELERY_BROKER_URL", default="django://")
 # CELERYD_MAX_TASKS_PER_CHILD = 100

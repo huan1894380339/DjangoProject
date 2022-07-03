@@ -105,7 +105,7 @@ def active(request, uidb64, token):
         user = CustomerUser._default_manager.get(pk=uid)
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
-    if not user and default_token_generator.check_token(user, token):
+    if user and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')

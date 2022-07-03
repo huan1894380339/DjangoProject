@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9-slim-buster
+FROM python:3.8
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ ENV PYTHONUNBUFFERED 1
 ADD poetry.lock pyproject.toml ./
 
 # System deps:
-RUN pip install poetry==1.1.13
+RUN pip install poetry
 
 # install dependencies
 RUN poetry config virtualenvs.create false
