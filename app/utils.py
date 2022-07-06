@@ -31,7 +31,9 @@ def send_email(user, current_site, html):
         },
     )
     text_content = strip_tags(html_content)
-    email = EmailMultiAlternatives('subject', text_content, EMAIL_HOST, [to])
+    email = EmailMultiAlternatives(
+        'EMAIL VERIFY', text_content, EMAIL_HOST, [to],
+    )
     email.attach_alternative(html_content, 'text/html')
     email.send()
 

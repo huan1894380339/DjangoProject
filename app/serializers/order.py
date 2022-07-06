@@ -22,8 +22,8 @@ class CartItemSerializer(serializers.ModelSerializer):
         ]
 
     def get_voucher(self, instance):
-        membership = Membership.objects.select_related('customeruser').filter(
-            customeruser=instance.user.id,
+        membership = Membership.objects.select_related('user').filter(
+            user=instance.user.id,
         ).first()
         return '%s%s' % (membership.voucher, '%')
 
@@ -34,12 +34,12 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = [
-            'user', 'status', 'cartitems',
-            'shiping_address', 'phone', 'created_at', 'cart_total',
+            'id', 'status', 'user', 'shiping_address', 'phone', 'created_at',
+            'cartitems', 'cart_total',
         ]
 
     def get_cartitems(self, obj: Order):
-        queryset = obj.orderitem.all()
+        queryset = obj.cart_item.all()
         return CartItemSerializer(queryset, many=True).data
 
 
@@ -87,3 +87,13 @@ class OrderAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = '__all__'
+
+    def save(self):
+        order = Order(
+            user=self.context['user'],
+            shiping_address=self.data['shiping_address'],
+            order_decription=self.data['order_decription'],
+            phone=self.data['phone'],
+        )
+        order.save()
+        order.cart_item.add(*self.data['cart_item'])

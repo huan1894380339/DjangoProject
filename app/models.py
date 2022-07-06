@@ -4,10 +4,8 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
-from app.constant import ITEM_STATUS
+from app.constant import ITEM_STATUS_ORDER, ITEM_STATUS_CART
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 # Define Google Drive Storage
 gd_storage = GoogleDriveStorage()
 
@@ -17,8 +15,8 @@ date_field = models.DateField(default=timezone.now)
 
 class CustomerUser(AbstractUser):
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(default='', max_length=10)
-    address = models.CharField(default='', max_length=255)
+    phone_number = models.CharField(default='', max_length=10, blank=True)
+    address = models.CharField(default='', max_length=255, blank=True)
     # code_verify = models.CharField(max_length=255)
 
     def __str__(self) -> str:
@@ -26,7 +24,7 @@ class CustomerUser(AbstractUser):
 
 
 class Membership(models.Model):
-    customeruser = models.ForeignKey(CustomerUser, on_delete=models.Model)
+    user = models.ForeignKey(CustomerUser, on_delete=models.Model)
     rank = models.IntegerField()
     voucher = models.FloatField()
 
@@ -113,36 +111,11 @@ class Supplier(models.Model):
         return f'id:{self.id} - {self.product}'
 
 
-class Order(models.Model):
-    user = models.ForeignKey(
-        CustomerUser, on_delete=models.CASCADE, related_name='order_user',
-    )
-    shiping_address = models.CharField(blank=False, null=False, max_length=255)
-    order_decription = models.TextField(blank=False, null=False)
-    # subtotal =models.FloatField(default=0)
-    phone = models.CharField(null=True, max_length=255)
-    is_completed = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(choices=ITEM_STATUS, max_length=2, default='NE')
-
-    def __str__(self):
-        return str(self.id)
-
-    @property
-    def cart_total(self):
-        cartitem = self.orderitem.all()
-        total = sum(
-            product.item_total_after_apply_voucher()
-            for product in cartitem
-        )
-        return total
-
-
 class CartItem(models.Model):
     user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
-    order = models.ForeignKey(
-        Order, on_delete=models.CASCADE, related_name='orderitem',
+    status = models.CharField(
+        choices=ITEM_STATUS_CART,
+        max_length=1, default='N',
     )
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='cartitem_product',
@@ -158,12 +131,40 @@ class CartItem(models.Model):
         return total
 
     def item_total_after_apply_voucher(self):
-        membership = Membership.objects.select_related('customeruser').filter(
-            customeruser=self.user.id,
+        membership = Membership.objects.select_related('user').filter(
+            user=self.user.id,
         ).first()
         total = self.quantity * self.product.price * \
             ((100 - membership.voucher) / 100)
-        return total
+        return round(total, 1)
+
+
+class Order(models.Model):
+    user = models.ForeignKey(
+        CustomerUser, on_delete=models.CASCADE, related_name='order_user',
+    )
+    cart_item = models.ManyToManyField(CartItem, related_name='order_cartitem')
+    shiping_address = models.CharField(blank=False, null=False, max_length=255)
+    order_decription = models.TextField(blank=False, null=False)
+    phone = models.CharField(null=True, max_length=255)
+    is_completed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        choices=ITEM_STATUS_ORDER, max_length=2, default='NE',
+    )
+
+    def __str__(self):
+        return str(self.id)
+
+    @property
+    def cart_total(self):
+        cartitem = self.cart_item.all()
+        total = sum(
+            product.item_total_after_apply_voucher()
+            for product in cartitem
+        )
+        return round(total, 1)
 
 
 class BlackListedToken(models.Model):
@@ -175,12 +176,3 @@ class BlackListedToken(models.Model):
 
     class Meta:
         unique_together = ('token', 'user')
-
-
-@receiver(post_save, sender=Order, dispatch_uid='update_voucher')
-def update_voucher(sender, instance, **kwargs):
-    membership = Membership.objects.get(customeruser=instance.user.id)
-    all_order = Order.objects.filter(user=instance.user, status='SE')
-    voucher = (sum(order.cart_total for order in all_order) * 1e-8) * 100
-    membership.voucher = voucher
-    membership.save()

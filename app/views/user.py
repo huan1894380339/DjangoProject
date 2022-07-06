@@ -13,6 +13,8 @@ from django.contrib.auth import login, logout
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
 
 
 class UserViewSet(GenericViewSet):
@@ -81,3 +83,17 @@ class UserViewSet(GenericViewSet):
         current_site = get_current_site(request)
         send_email(user, current_site, html='mail_reset_password.html')
         return Response({'message': 'Check your email'})
+
+    @action(detail=False, methods=['post'], url_path=r'active_account/<uidb64>/<token>', url_name='active_acount')
+    def active_account(request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = CustomerUser._default_manager.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
+            user = None
+        if user and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response('Thank you for your email confirmation. Now you can login your account.')
+        else:
+            return Response('Activation link is invalid!')
