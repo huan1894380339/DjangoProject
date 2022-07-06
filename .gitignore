@@ -94,4 +94,6 @@ db.sqlite3
 *.pdf
 *.csv
 test/
-migrations
+**/migrations/**
+!**/migrations
+.vscode
