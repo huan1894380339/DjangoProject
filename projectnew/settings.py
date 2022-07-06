@@ -17,6 +17,8 @@ from pathlib import Path
 
 import environ
 
+import socket
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -30,7 +32,7 @@ SECRET_KEY = 'django-insecure-h2#5jan5bz=2ap@&i&_&#lagamshmkju)wa*y(i%pmbce5f&v4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -109,19 +111,14 @@ SECRET_KEY = env('SECRET_KEY', default='unsafe-secret-key')
 DATABASES = {
     'default': env.db(),
 }
-# EMAIL_BACKEND = env('EMAIL_BACKEND')
-# EMAIL_HOST = env('EMAIL_HOST')
-# EMAIL_USE_TLS = env('EMAIL_USE_TLS')
-# EMAIL_PORT = env('EMAIL_PORT')
-# EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
 # config email server
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'huan.duong@kyanon.digital'
-EMAIL_HOST_PASSWORD = 'leypdkzmjmtdsoxi'
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -183,12 +180,13 @@ SIMPLE_JWT = {
 }
 # cron_job
 CRONJOBS = [
-    ('*/30 * * * *', 'app.cron.cronjob_Blacklist'),
+    ('*/30 * * * *', 'app.cron.cronjob_blacklist'),
 ]
 
 # CELERY STUFF
-BROKER_URL = 'redis://localhost:6379'
-
+# local
+# BROKER_URL = 'redis://localhost:6379'
+BROKER_URL = 'redis://redis:6379'
 #  Celery
 # BROKER_URL = env("CELERY_BROKER_URL", default="django://")
 # CELERYD_MAX_TASKS_PER_CHILD = 100
@@ -211,3 +209,9 @@ INTERNAL_IPS = [
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'projectnew.utils.show_toolbar',
 }
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+for ip in ips:
+    # replace last octet in IP with .1
+    ip = '{}.1'.format(ip.rsplit('.', 1)[0])
+    INTERNAL_IPS.append(ip)

@@ -13,7 +13,7 @@ class IsTokenValid(IsAuthenticated):
             )
         token = request.headers.get('Authorization').split(' ')[1]
         try:
-            is_blackListed = BlackListedToken.objects.get(
+            is_blackListed = BlackListedToken.objects.select_related('user').get(
                 user=user_id, token=token,
             )
             if is_blackListed:

@@ -47,7 +47,7 @@ class ReportViewSet(GenericViewSet):
             left=0.125, bottom=0.1, right=0.9,
             top=0.9, wspace=0.2, hspace=0.35,
         )
-        plt.savefig('app/tests/file_tests/bar_chart.pdf')
+        plt.savefig('./app/tests/file_tests/bar_chart.pdf')
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
@@ -60,5 +60,5 @@ class ReportViewSet(GenericViewSet):
         month = list(serializer.data['total_month'].keys())
         sale = list(serializer.data['total_month'].values())
         ax.pie(sale, labels=month, autopct='%1.2f%%')
-        fig.savefig('app/tests/file_tests/pie_chart.pdf')
+        fig.savefig('./app/tests/file_tests/pie_chart.pdf')
         return Response(serializer.data)

@@ -8,7 +8,7 @@ class MonthSerializer(serializers.Serializer):
     sale_total_month = serializers.SerializerMethodField()
 
     def get_count_order(self, month):
-        count_order = Order.objects.prefetch_related('orderitem').filter(
+        count_order = Order.objects.prefetch_related('cart_item').filter(
             updated_at__month=month, updated_at__year=self.context['year'],
         ).count()
         return count_order
@@ -16,7 +16,7 @@ class MonthSerializer(serializers.Serializer):
     def get_count_by_status(self, month):
         count_by_status = dict()
         for status in ['NE', 'CO', 'SH', 'RE', 'SU', 'CA']:
-            count_new_order = Order.objects.prefetch_related('orderitem').filter(
+            count_new_order = Order.objects.prefetch_related('cart_item').filter(
                 updated_at__month=month, updated_at__year=self.context['year'], status=status,
             ).count()
             count_by_status[status] = count_new_order
@@ -24,7 +24,7 @@ class MonthSerializer(serializers.Serializer):
 
     def get_sale_total_month(self, month):
         sale_total = 0
-        orders = Order.objects.prefetch_related('orderitem').filter(
+        orders = Order.objects.prefetch_related('cart_item').filter(
             updated_at__month=month, updated_at__year=self.context['year'], status__in=[
                 'NE', 'CO', 'SH', 'RE', 'SU',
             ],

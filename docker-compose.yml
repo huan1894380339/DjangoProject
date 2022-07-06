@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  app_django:
+    restart: always
+    build: .
+    stdin_open: true
+    tty: true
+    command: poetry run python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - ./.env
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - app_db
+      - redis
+    networks:
+      - djangonetwork
+  app_db:
+    image: postgres:14
+    volumes:
+      - data_db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_DB=dbtest
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=postgres
+    networks:
+    - djangonetwork
+  redis:
+    restart: always
+    image: redis:alpine
+    command: redis-server
+    networks:
+    - djangonetwork
+  celery:
+    restart: always
+    build: .
+    command: celery -A projectnew worker -l INFO
+    volumes:
+      - .:/app
+    env_file:
+      - ./.env
+    depends_on:
+      - app_django
+      - app_db
+      - redis
+    networks:
+    - djangonetwork
+volumes:
+  data_db:
+networks:
+  djangonetwork:
+    driver: bridge
