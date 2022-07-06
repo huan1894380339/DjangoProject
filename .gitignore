@@ -85,15 +85,15 @@ target/
 __pycache__/
 local_settings.py
 
-.env
+# .env
 db.sqlite3
 .vscode/*
 .history/
 *.vsix
 #static file
-*.pdf
-*.csv
-test/
+# *.pdf
+# *.csv
+# test/
 **/migrations/**
 !**/migrations
 .vscode
