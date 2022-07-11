@@ -205,7 +205,7 @@ INTERNAL_IPS = [
     # ...
 ]
 
-
+# Config debugToolBar
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'projectnew.utils.show_toolbar',
 }
@@ -215,3 +215,18 @@ for ip in ips:
     # replace last octet in IP with .1
     ip = '{}.1'.format(ip.rsplit('.', 1)[0])
     INTERNAL_IPS.append(ip)
+    
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Basic': {
+            'type': 'basic'
+      },
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   }
+}
+    

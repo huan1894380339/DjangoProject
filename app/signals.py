@@ -1,5 +1,6 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save, m2m_changed
+from numpy import insert
 from app.models import Membership, Order
 
 
@@ -13,24 +14,43 @@ def update_voucher(sender, instance, **kwargs):
         membership.save()
 
 
-@receiver(m2m_changed, sender=Order.cart_item.through)
-def update_status_cartitem(sender, instance, **kwargs):
-    cart_item = instance.cart_item.all()
-    for cart in cart_item:
-        cart.status = 'C'
-        cart.save()
+# @receiver(m2m_changed, sender=Order.cart_item.through)
+# def update_status_cartitem(sender, instance, **kwargs):
+#     cart_item = instance.cart_item.all()
+#     for cart in cart_item:
+#         cart.status = 'C'
+#         cart.save()
 
+# handle cartitem
+@receiver(m2m_changed, sender=Order.cart_item.through)
+def update_status_cartitem(sender, instance, action, **kwargs):
+    if action == "post_add":
+        if instance.user in [x.user for x in instance.cart_item.all()]:
+            instance.save()
+            cart_item = instance.cart_item.all()
+            for cart in cart_item:
+                cart.status = 'C'
+                cart.save()
+        else:
+            raise Exception('Something error with user value')
+        
+
+# @receiver(m2m_changed, sender=Order.cart_item.through)
+# def validate_cart_item(sender, instance, **kwargs):
+#     import ipdb;ipdb.set_trace()
+#     if instance.user not in [x.user for x in instance.cart_item.all()]:
+#         raise Exception('Something error with user value')
+#     else:
+#         instance.save()
 
 #  check user in cart item and order
 
 
-def validate_order(sender, instance, **kwargs):
-    import ipdb
-    ipdb.set_trace()
-    if instance.user not in [x.user for x in instance.cart_item.all()]:
-        raise Exception('Something error with user value')
-    else:
-        instance.save()
+# def validate_cart_item(sender, instance, **kwargs):
+#     import ipdb;ipdb.set_trace()
+#     if instance.user not in [x.user for x in instance.cart_item.all()]:
+#         raise Exception('Something error with user value')
+#     else:
+#         instance.save()
 
-
-m2m_changed.connect(validate_order, sender=Order.cart_item.through)
+# m2m_changed.connect(validate_cart_item, sender=Order.cart_item.through)

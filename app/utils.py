@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import datetime
+from email.mime import message
 import os
+from httplib2 import Response
 import jwt
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from rest_framework_simplejwt.tokens import RefreshToken
 from projectnew.settings import EMAIL_HOST, REFRESH_TOKEN_SECRET, SECRET_KEY
-from .models import CustomerUser
+from .models import CustomerUser, Membership
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -18,7 +20,9 @@ from json2html import json2html
 import pdfkit
 import io
 from PIL import Image
-
+from app.models import Membership
+from app.models import CustomerUser
+from app.models import CustomerUser
 
 def send_email(user, current_site, html):
     to = user.email
@@ -28,6 +32,7 @@ def send_email(user, current_site, html):
             'domain': current_site.domain, 'uid': urlsafe_base64_encode(
                 force_bytes(user.id),
             ), 'token': default_token_generator.make_token(user),
+            'username':user.username
         },
     )
     text_content = strip_tags(html_content)
@@ -108,11 +113,13 @@ def active(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
     if user and default_token_generator.check_token(user, token):
+        if user.email in CustomerUser.objects.get(email=user.email, is_active=True):
+            return HttpResponse('Activation link is invalid!, account with this email already')
         user.is_active = True
         user.save()
+        Membership.objects.create(user=user)
         return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-    else:
-        return HttpResponse('Activation link is invalid!')
+    return HttpResponse('Activation link is invalid!')
 
 
 def reset_password(request, uidb64, token):
@@ -152,3 +159,9 @@ def factory_img():
     image_file.name = 'test.png'
     image_file.seek(0)
     return image_file
+
+
+def check_acount_email_already(email):
+    try: account = CustomerUser.objects.get(email=email, is_active=True)
+    except: 
+        return False

@@ -31,7 +31,7 @@ class OrderViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = OrderAddSerializer(
+        serializer = self.get_serializer(
             data=request.data, context={'user': request.user},
         )
         serializer.is_valid()

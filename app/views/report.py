@@ -8,9 +8,17 @@ from app.utils import PdfConverter
 
 
 class ReportViewSet(GenericViewSet):
+
+    def get_serializer_class(self):
+        if self.action == 'chart_compare_month':
+            return MonthSerializer
+        if self.action == 'pie_chart_month':
+            return ReportOrderSaleSerializer  
+        return ReportOrderSerializer
+
     @action(detail=False, methods=['get'])
     def report_month(self, request):
-        serializer = ReportOrderSerializer(data=request.query_params)
+        serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         response = (serializer.data)
         pdfc = PdfConverter()
@@ -22,7 +30,7 @@ class ReportViewSet(GenericViewSet):
     def chart_compare_month(self, request):
         plt.figure(figsize=(16, 15))
         for month in range(1, 13):
-            serializer = MonthSerializer(
+            serializer = self.get_serializer(
                 month, context={'year': request.query_params.get('year')},
             )
             list_count_by_status = list(
@@ -52,7 +60,7 @@ class ReportViewSet(GenericViewSet):
 
     @action(detail=False, methods=['get'])
     def pie_chart_month(self, request):
-        serializer = ReportOrderSaleSerializer(data=request.query_params)
+        serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         fig = plt.figure()
         ax = fig.add_axes([0, 0, 1, 1])

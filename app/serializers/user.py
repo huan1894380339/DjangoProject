@@ -1,5 +1,6 @@
 from __future__ import annotations
 from django.db.models import Q
+from numpy import require
 
 from rest_framework import serializers
 
@@ -16,11 +17,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'password', 'password2']
 
     def validate(self, data):
-        existing = CustomerUser.objects.filter(email=data['email']).first()
-        if existing:
-            raise serializers.ValidationError(
-                'Someone with that email address has already registered. Was it you?',
-            )
         if data['password'] != data['password2']:
             raise serializers.ValidationError('Password confirm not match!')
         return data
@@ -43,31 +39,33 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SignInSerializer(serializers.Serializer):
-    email = serializers.EmailField()
-    password = serializers.CharField(max_length=100)
+    email_username = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=12,style={'input_type': 'password'}, write_only=True,)
 
     def validate(self, data):
         user = CustomerUser.objects.filter(
-            Q(email=data['email']) | Q(username=data['email']),
+            Q(email=data['email_username']) | Q(username=data['email_username']),is_active=True
         ).first()
         if not user or user.check_password(data['password']) is False:
-            raise serializers.ValidationError('Incorrect Email or Password')
+            raise serializers.ValidationError('Incorrect Email/Username or Password')
         if user.is_active is False:
             raise serializers.ValidationError('You have to verify acount')
         return data
 
 
 class PasswordSerializer(serializers.ModelSerializer):
-    new_password = serializers.CharField(max_length=128)
-
+    new_password = serializers.CharField(max_length=12, style={'input_type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(max_length=12,  style={'input_type': 'password'}, write_only=True)
     class Meta:
         model = CustomerUser
-        fields = ['password', 'new_password']
+        fields = ['password', 'new_password', 'confirm_password']
 
     def update(self, validated_data, instance):
 
         if instance.check_password(self.validated_data['password']) is False:
-            raise serializers.ValidationError('Old Password Incorrect')
+            raise serializers.ValidationError({'password':'Old Password Incorrect'})
+        if validated_data['new_password'] != validated_data['confirm_password']:
+            raise serializers.ValidationError({'confirm_password':'Password new and password confirm not match!'})
         instance.set_password(self.validated_data['new_password'])
         instance.save()
 

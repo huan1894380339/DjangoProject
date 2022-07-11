@@ -20,17 +20,18 @@ class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
     pagination_class = PageNumberPagination
 
+    def get_serializer_class(self):
+        if self.action == 'import_product_csv':
+            return CsvSerializer
+        return ProductSerializer
+
     def create(self, request, *args, **kwargs):
+        import ipdb;ipdb.set_trace()
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    def get_serializer_class(self):
-        if self.action == 'import_product_csv':
-            return CsvSerializer
-        return ProductSerializer
 
     @action(detail=False, methods=['post'])
     def import_product_csv(self, request):
@@ -65,7 +66,7 @@ class ProductViewSet(ModelViewSet):
     @action(detail=False, methods=['get'])
     def new_product(self, request):
         queryset = Product.objects.all().order_by('-id')[:10]
-        serializer = ProductSerializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['get'])
@@ -76,5 +77,5 @@ class ProductViewSet(ModelViewSet):
         queryset = Product.objects.filter(
             category=category,
         ).order_by('-id')[:10]
-        serializer = ProductSerializer(queryset, many=True)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
