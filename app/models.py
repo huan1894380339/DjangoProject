@@ -14,7 +14,7 @@ date_field = models.DateField(default=timezone.now)
 
 
 class CustomerUser(AbstractUser):
-    email = models.EmailField(unique=True)
+    email = models.EmailField()
     phone_number = models.CharField(default='', max_length=10, blank=True)
     address = models.CharField(default='', max_length=255, blank=True)
     # code_verify = models.CharField(max_length=255)
@@ -24,9 +24,9 @@ class CustomerUser(AbstractUser):
 
 
 class Membership(models.Model):
-    user = models.ForeignKey(CustomerUser, on_delete=models.Model)
-    rank = models.IntegerField()
-    voucher = models.FloatField()
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
+    rank = models.IntegerField(default=1)
+    voucher = models.FloatField(default=0)
 
     @property
     def get_voucher(self):

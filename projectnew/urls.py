@@ -23,13 +23,14 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='Snippets API',
+        title='Management Server API',
         default_version='v1',
-        description='Test description',
+        description='Description',
         terms_of_service='https://www.google.com/policies/terms/',
         contact=openapi.Contact(email='contact@snippets.local'),
         license=openapi.License(name='BSD License'),
     ),
+    # url='https://6418-8-21-11-136.ap.ngrok.io',
     public=True,
     permission_classes=[permissions.AllowAny],
 )

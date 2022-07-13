@@ -1,5 +1,5 @@
 {% autoescape off %}
-Hi {{ user.username }},
+Hi, <a style="color:coral">{{username}}</a>
 Please click on the link to confirm your registration,
 <a href="http://{{domain}}{% url 'app:active' uidb64=uid token=token %}">Link active here</a>
 If you think, it's not you, then just ignore this email.

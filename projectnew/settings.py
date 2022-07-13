@@ -18,7 +18,6 @@ from pathlib import Path
 import environ
 
 import socket
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -205,7 +204,7 @@ INTERNAL_IPS = [
     # ...
 ]
 
-
+# Config debugToolBar
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': 'projectnew.utils.show_toolbar',
 }
@@ -215,3 +214,21 @@ for ip in ips:
     # replace last octet in IP with .1
     ip = '{}.1'.format(ip.rsplit('.', 1)[0])
     INTERNAL_IPS.append(ip)
+
+# Config Swagger
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        # 'basic': {
+        #     'type': 'basic'
+        # },
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+        },
+    },
+    'USE_SESSION_AUTH': False,
+    'REFETCH_SCHEMA_WITH_AUTH': True,
+    'REFETCH_SCHEMA_ON_LOGOUT': True,
+    # 'DEFAULT_API_URL':'https://6418-8-21-11-136.ap.ngrok.io'
+}

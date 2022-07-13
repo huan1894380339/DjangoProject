@@ -12,7 +12,7 @@ from rest_framework import status
 
 class OrderViewSet(ModelViewSet):
     permission_classes = [IsTokenValid]
-    serializer_class = OrderDetailSerializer
+    serializer_class = OrderSerializer
     queryset = Order.objects.all()
     pagination_class = DefaultPagination
 
@@ -31,7 +31,7 @@ class OrderViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = OrderAddSerializer(
+        serializer = self.get_serializer(
             data=request.data, context={'user': request.user},
         )
         serializer.is_valid()
