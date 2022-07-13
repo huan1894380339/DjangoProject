@@ -22,21 +22,81 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CustomerUser',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('password', models.CharField(max_length=128, verbose_name='password')),
-                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
-                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
-                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
-                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
-                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
-                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
+                (
+                    'password', models.CharField(
+                        max_length=128, verbose_name='password',
+                    ),
+                ),
+                (
+                    'last_login', models.DateTimeField(
+                        blank=True, null=True, verbose_name='last login',
+                    ),
+                ),
+                (
+                    'is_superuser', models.BooleanField(
+                        default=False,
+                        help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status',
+                    ),
+                ),
+                (
+                    'username', models.CharField(
+                        error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.',
+                        max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username',
+                    ),
+                ),
+                (
+                    'first_name', models.CharField(
+                        blank=True,
+                        max_length=150, verbose_name='first name',
+                    ),
+                ),
+                (
+                    'last_name', models.CharField(
+                        blank=True,
+                        max_length=150, verbose_name='last name',
+                    ),
+                ),
+                (
+                    'is_staff', models.BooleanField(
+                        default=False,
+                        help_text='Designates whether the user can log into this admin site.', verbose_name='staff status',
+                    ),
+                ),
+                (
+                    'is_active', models.BooleanField(
+                        default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active',
+                    ),
+                ),
+                (
+                    'date_joined', models.DateTimeField(
+                        default=django.utils.timezone.now, verbose_name='date joined',
+                    ),
+                ),
                 ('email', models.EmailField(max_length=254, unique=True)),
-                ('phone_number', models.CharField(blank=True, default='', max_length=10)),
+                (
+                    'phone_number', models.CharField(
+                        blank=True, default='', max_length=10,
+                    ),
+                ),
                 ('address', models.CharField(blank=True, default='', max_length=255)),
-                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
-                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
+                (
+                    'groups', models.ManyToManyField(
+                        blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+                        related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups',
+                    ),
+                ),
+                (
+                    'user_permissions', models.ManyToManyField(
+                        blank=True, help_text='Specific permissions for this user.',
+                        related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'user',
@@ -50,15 +110,31 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CartItem',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('W', 'Waiting'), ('C', 'Created Order')], default='N', max_length=1)),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
+                (
+                    'status', models.CharField(
+                        choices=[
+                            ('W', 'Waiting'), ('C', 'Created Order'),
+                        ], default='N', max_length=1,
+                    ),
+                ),
                 ('quantity', models.IntegerField(default=1)),
             ],
         ),
         migrations.CreateModel(
             name='Category',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('title', models.CharField(max_length=200)),
                 ('slug', models.CharField(max_length=100)),
                 ('description', models.TextField()),
@@ -68,7 +144,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Contact',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=20)),
                 ('mail', models.EmailField(max_length=254)),
                 ('content', models.CharField(max_length=1000)),
@@ -78,87 +159,186 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Product',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('code', models.CharField(max_length=10)),
                 ('title', models.CharField(max_length=200, unique=True)),
-                ('img_product', models.FileField(blank=True, storage=gdstorage.storage.GoogleDriveStorage(), upload_to='maps/')),
+                (
+                    'img_product', models.FileField(
+                        blank=True, storage=gdstorage.storage.GoogleDriveStorage(), upload_to='maps/',
+                    ),
+                ),
                 ('description', models.TextField()),
-                ('price', models.FloatField(validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(2000)])),
+                (
+                    'price', models.FloatField(
+                        validators=[
+                            django.core.validators.MinValueValidator(
+                                1,
+                            ), django.core.validators.MaxValueValidator(2000),
+                        ],
+                    ),
+                ),
                 ('active', models.BooleanField(default=True)),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.category')),
+                (
+                    'category', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='app.category',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Supplier',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('name_supplier', models.CharField(max_length=200)),
                 ('price', models.IntegerField(default=0)),
                 ('sale_price', models.IntegerField(default=0)),
                 ('inventory', models.IntegerField(default=0)),
                 ('active', models.BooleanField(default=True)),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.product')),
+                (
+                    'product', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='app.product',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Order',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('shiping_address', models.CharField(max_length=255)),
                 ('order_decription', models.TextField()),
                 ('phone', models.CharField(max_length=255, null=True)),
                 ('is_completed', models.BooleanField(default=False)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('status', models.CharField(choices=[('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), ('RE', 'Received'), ('SU', 'Success'), ('CA', 'Cancel')], default='NE', max_length=2)),
-                ('cart_item', models.ManyToManyField(related_name='order_cartitem', to='app.CartItem')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='order_user', to=settings.AUTH_USER_MODEL)),
+                (
+                    'status', models.CharField(
+                        choices=[
+                            ('NE', 'New'), ('CO', 'Confirmed'), ('SH', 'Shipped Out'), (
+                                'RE', 'Received',
+                            ), ('SU', 'Success'), ('CA', 'Cancel'),
+                        ], default='NE', max_length=2,
+                    ),
+                ),
+                (
+                    'cart_item', models.ManyToManyField(
+                        related_name='order_cartitem', to='app.CartItem',
+                    ),
+                ),
+                (
+                    'user', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='order_user', to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Membership',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('rank', models.IntegerField()),
                 ('voucher', models.FloatField()),
-                ('user', models.ForeignKey(on_delete=models.Model, to=settings.AUTH_USER_MODEL)),
+                (
+                    'user', models.ForeignKey(
+                        on_delete=models.Model, to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Gallery',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('img_product', models.FileField(blank=True, storage=gdstorage.storage.GoogleDriveStorage(), upload_to='maps/')),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='prod_gallery', to='app.product')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
+                (
+                    'img_product', models.FileField(
+                        blank=True, storage=gdstorage.storage.GoogleDriveStorage(), upload_to='maps/',
+                    ),
+                ),
+                (
+                    'product', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='prod_gallery', to='app.product',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Discount',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('day_start', models.DateTimeField()),
                 ('day_end', models.DateTimeField()),
                 ('value_discount', models.IntegerField()),
-                ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.product')),
+                (
+                    'product', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to='app.product',
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
             model_name='cartitem',
             name='product',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cartitem_product', to='app.product'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='cartitem_product', to='app.product',
+            ),
         ),
         migrations.AddField(
             model_name='cartitem',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.CreateModel(
             name='BlackListedToken',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id', models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True, serialize=False, verbose_name='ID',
+                    ),
+                ),
                 ('token', models.CharField(max_length=500)),
                 ('timestamp', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='token_user', to=settings.AUTH_USER_MODEL)),
+                (
+                    'user', models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name='token_user', to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
                 'unique_together': {('token', 'user')},

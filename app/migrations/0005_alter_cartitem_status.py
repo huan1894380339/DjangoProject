@@ -13,6 +13,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cartitem',
             name='status',
-            field=models.CharField(choices=[('C', 'Created Order'), ('W', 'Waiting')], default='N', max_length=1),
+            field=models.CharField(
+                choices=[('C', 'Created Order'), ('W', 'Waiting')], default='N', max_length=1,
+            ),
         ),
     ]

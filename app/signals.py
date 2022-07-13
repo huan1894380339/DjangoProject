@@ -1,6 +1,5 @@
 from django.dispatch import receiver
 from django.db.models.signals import post_save, m2m_changed
-from numpy import insert
 from app.models import Membership, Order
 
 
@@ -24,7 +23,7 @@ def update_voucher(sender, instance, **kwargs):
 # handle cartitem
 @receiver(m2m_changed, sender=Order.cart_item.through)
 def update_status_cartitem(sender, instance, action, **kwargs):
-    if action == "post_add":
+    if action == 'post_add':
         if instance.user in [x.user for x in instance.cart_item.all()]:
             instance.save()
             cart_item = instance.cart_item.all()
@@ -33,7 +32,7 @@ def update_status_cartitem(sender, instance, action, **kwargs):
                 cart.save()
         else:
             raise Exception('Something error with user value')
-        
+
 
 # @receiver(m2m_changed, sender=Order.cart_item.through)
 # def validate_cart_item(sender, instance, **kwargs):

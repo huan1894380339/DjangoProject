@@ -13,7 +13,7 @@ class ReportViewSet(GenericViewSet):
         if self.action == 'chart_compare_month':
             return MonthSerializer
         if self.action == 'pie_chart_month':
-            return ReportOrderSaleSerializer  
+            return ReportOrderSaleSerializer
         return ReportOrderSerializer
 
     @action(detail=False, methods=['get'])

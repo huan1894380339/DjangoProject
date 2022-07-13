@@ -9,5 +9,11 @@ class CartItemViewset(ModelViewSet):
     serializer_class = ItemSerializer
 
     def get_queryset(self):
-        queryset = CartItem.objects.filter(user=self.request.user, status='W')
+        try:
+            queryset = CartItem.objects.filter(
+                user=self.request.user, status='W',
+            )
+        except Exception as e:
+            raise e
+            queryset = []
         return queryset

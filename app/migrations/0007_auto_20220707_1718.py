@@ -15,7 +15,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cartitem',
             name='status',
-            field=models.CharField(choices=[('C', 'Created Order'), ('W', 'Waiting')], default='N', max_length=1),
+            field=models.CharField(
+                choices=[('C', 'Created Order'), ('W', 'Waiting')], default='N', max_length=1,
+            ),
         ),
         migrations.AlterField(
             model_name='customeruser',
@@ -30,7 +32,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='membership',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL,
+            ),
         ),
         migrations.AlterField(
             model_name='membership',

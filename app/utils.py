@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 import datetime
-from email.mime import message
 import os
-from httplib2 import Response
 import jwt
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -20,9 +18,7 @@ from json2html import json2html
 import pdfkit
 import io
 from PIL import Image
-from app.models import Membership
-from app.models import CustomerUser
-from app.models import CustomerUser
+
 
 def send_email(user, current_site, html):
     to = user.email
@@ -32,7 +28,7 @@ def send_email(user, current_site, html):
             'domain': current_site.domain, 'uid': urlsafe_base64_encode(
                 force_bytes(user.id),
             ), 'token': default_token_generator.make_token(user),
-            'username':user.username
+            'username': user.username,
         },
     )
     text_content = strip_tags(html_content)
@@ -161,7 +157,11 @@ def factory_img():
     return image_file
 
 
-def check_acount_email_already(email):
-    try: account = CustomerUser.objects.get(email=email, is_active=True)
-    except: 
-        return False
+def check_account_email_already(email):
+    try:
+        account = CustomerUser.objects.get(email=email, is_active=True)
+        if account:
+            return True
+    except Exception as e:
+        raise e
+    return False

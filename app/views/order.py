@@ -12,7 +12,7 @@ from rest_framework import status
 
 class OrderViewSet(ModelViewSet):
     permission_classes = [IsTokenValid]
-    serializer_class = OrderDetailSerializer
+    serializer_class = OrderSerializer
     queryset = Order.objects.all()
     pagination_class = DefaultPagination
 

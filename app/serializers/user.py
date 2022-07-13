@@ -1,6 +1,5 @@
 from __future__ import annotations
 from django.db.models import Q
-from numpy import require
 
 from rest_framework import serializers
 
@@ -40,22 +39,31 @@ class UserSerializer(serializers.ModelSerializer):
 
 class SignInSerializer(serializers.Serializer):
     email_username = serializers.CharField(max_length=255)
-    password = serializers.CharField(max_length=12,style={'input_type': 'password'}, write_only=True,)
+    password = serializers.CharField(
+        max_length=12, style={'input_type': 'password'}, write_only=True,
+    )
 
     def validate(self, data):
         user = CustomerUser.objects.filter(
-            Q(email=data['email_username']) | Q(username=data['email_username']),is_active=True
+            Q(email=data['email_username']) | Q(username=data['email_username']), is_active=True,
         ).first()
         if not user or user.check_password(data['password']) is False:
-            raise serializers.ValidationError('Incorrect Email/Username or Password')
+            raise serializers.ValidationError(
+                'Incorrect Email/Username or Password',
+            )
         if user.is_active is False:
             raise serializers.ValidationError('You have to verify acount')
         return data
 
 
 class PasswordSerializer(serializers.ModelSerializer):
-    new_password = serializers.CharField(max_length=12, style={'input_type': 'password'}, write_only=True)
-    confirm_password = serializers.CharField(max_length=12,  style={'input_type': 'password'}, write_only=True)
+    new_password = serializers.CharField(
+        max_length=12, style={'input_type': 'password'}, write_only=True,
+    )
+    confirm_password = serializers.CharField(
+        max_length=12, style={'input_type': 'password'}, write_only=True,
+    )
+
     class Meta:
         model = CustomerUser
         fields = ['password', 'new_password', 'confirm_password']
@@ -63,9 +71,13 @@ class PasswordSerializer(serializers.ModelSerializer):
     def update(self, validated_data, instance):
 
         if instance.check_password(self.validated_data['password']) is False:
-            raise serializers.ValidationError({'password':'Old Password Incorrect'})
+            raise serializers.ValidationError(
+                {'password': 'Old Password Incorrect'},
+            )
         if validated_data['new_password'] != validated_data['confirm_password']:
-            raise serializers.ValidationError({'confirm_password':'Password new and password confirm not match!'})
+            raise serializers.ValidationError(
+                {'confirm_password': 'Password new and password confirm not match!'},
+            )
         instance.set_password(self.validated_data['new_password'])
         instance.save()
 

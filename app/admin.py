@@ -20,7 +20,7 @@ admin.site.register(BlackListedToken)
 class UserForm(ModelForm):
     class Meta:
         widgets = {
-            'password':PasswordInput(render_value = True)
+            'password': PasswordInput(render_value=True),
         }
 
 
@@ -57,7 +57,7 @@ class MembershipAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'voucher')
 
 
-@admin.register(CustomerUser,)
+@admin.register(CustomerUser)
 class CustomerUserAdmin(admin.ModelAdmin):
     form = UserForm
     fieldsets = (

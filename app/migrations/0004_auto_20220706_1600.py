@@ -13,11 +13,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='cartitem',
             name='status',
-            field=models.CharField(choices=[('W', 'Waiting'), ('C', 'Created Order')], default='N', max_length=1),
+            field=models.CharField(
+                choices=[('W', 'Waiting'), ('C', 'Created Order')], default='N', max_length=1,
+            ),
         ),
         migrations.AlterField(
             model_name='customeruser',
             name='email',
-            field=models.EmailField(blank=True, max_length=254, verbose_name='email address'),
+            field=models.EmailField(
+                blank=True, max_length=254, verbose_name='email address',
+            ),
         ),
     ]
