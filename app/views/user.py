@@ -10,8 +10,6 @@ from app.utils import send_email, check_account_email_already, get_tokens_for_us
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth import login, logout
 from rest_framework.decorators import action
-from django.utils.http import urlsafe_base64_decode
-from django.contrib.auth.tokens import default_token_generator
 from app.authentication import IsTokenValid
 from drf_yasg.openapi import (
     Schema,
@@ -38,13 +36,14 @@ class UserViewSet(GenericViewSet):
         return UserSerializer
 
     @swagger_auto_schema(
-        security=['None'],
+        security=[],
+        operation_summary='Register Account',
         request_body=Schema(
             type=TYPE_OBJECT,
-            description='Token generate for user',
+            description='Generate token for user',
             required=['email', 'username', 'password', 'password2'],
             properties={
-                'email': Schema(default='huan@gmail.com', title='Your Email', type=TYPE_STRING, format='email', description='A Email create multiple account with different username, but only one account with this email can be actived', example='17520528@gm.uit.edu.vn'),
+                'email': Schema(title='Your Email', type=TYPE_STRING, format='email', description='A Email create multiple account with different username, but only one account with this email can be actived', example='17520528@gm.uit.edu.vn'),
                 'username': Schema(
                     title='Your Username', type=TYPE_STRING, format=TYPE_STRING, pattern='^[/w.@+-]+$', maxLength=150, minLength=1,
                     description='Username is unique in system, A username is used only for 1 account. This value may contain only letters, numbers, and @/./+/-/_ characters.', example='UserName1',
@@ -77,6 +76,7 @@ class UserViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Sign In',
         request_body=Schema(
             type=TYPE_OBJECT,
             description='Token generate for user',
@@ -112,6 +112,7 @@ class UserViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
+        operation_summary='Change Password',
         request_body=Schema(
 
             type=TYPE_OBJECT,
@@ -147,6 +148,7 @@ class UserViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
+        operation_summary='Sign Out',
         request_body=no_body,
         responses={
             200: 'Logout successfully',
@@ -167,6 +169,7 @@ class UserViewSet(GenericViewSet):
 
     @swagger_auto_schema(
         security=[{'Bearer': []}],
+        operation_summary='Reset Password',
         request_body=Schema(
             type=TYPE_OBJECT,
             required=['email'],
@@ -188,16 +191,16 @@ class UserViewSet(GenericViewSet):
         send_email(user, current_site, html='mail_reset_password.html')
         return Response({'message': 'Check your email'})
 
-    @action(detail=False, methods=['post'], url_path=r'active_account/<uidb64>/<token>', url_name='active_acount')
-    def active_account(request, uidb64, token):
-        try:
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = CustomerUser._default_manager.get(pk=uid)
-        except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
-            user = None
-        if user and default_token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            return Response('Thank you for your email confirmation. Now you can login your account.')
-        else:
-            return Response('Activation link is invalid!')
+    # @action(detail=False, methods=['post'], url_path=r'active_account/<uidb64>/<token>', url_name='active_acount')
+    # def active_account(request, uidb64, token):
+    #     try:
+    #         uid = urlsafe_base64_decode(uidb64).decode()
+    #         user = CustomerUser._default_manager.get(pk=uid)
+    #     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
+    #         user = None
+    #     if user and default_token_generator.check_token(user, token):
+    #         user.is_active = True
+    #         user.save()
+    #         return Response('Thank you for your email confirmation. Now you can login your account.')
+    #     else:
+    #         return Response('Activation link is invalid!')

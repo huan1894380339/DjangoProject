@@ -14,7 +14,7 @@ from app.utils import get_list_path_images
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import FormParser
 
 from drf_yasg import openapi
 
@@ -33,10 +33,10 @@ class ProductViewSet(ModelViewSet):
             return ImgSerializer
         return ProductSerializer
 
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [FormParser]
 
     @swagger_auto_schema(
-        security=['None'],
+        security=[],
         responses={
             201: 'Create account successfully',
             400: 'Invalid Information, Please check it again',
@@ -51,7 +51,7 @@ class ProductViewSet(ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @swagger_auto_schema(
-        security=['None'],
+        security=[],
         manual_parameters=[
             openapi.Parameter(
                 name='file',
@@ -69,6 +69,9 @@ class ProductViewSet(ModelViewSet):
         serializer.create(request.data)
         return Response(status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        security=[],
+    )
     @action(detail=False, methods=['post'])
     def img_product_from_path(self, request: Request) -> Response:
         path = request.data['path']
@@ -76,13 +79,13 @@ class ProductViewSet(ModelViewSet):
         upload_image_task.delay(link_local)
         return Response(status=status.HTTP_200_OK)
 
-    test_param = openapi.Parameter(
-        'category', openapi.IN_QUERY, description='Category (Name)', type=openapi.TYPE_STRING,
-    )
-
     @swagger_auto_schema(
-        manual_parameters=[test_param],
-        security=['None'],
+        security=[],
+        manual_parameters=[
+            openapi.Parameter(
+                'category', openapi.IN_QUERY, description='Category (Name)', type=openapi.TYPE_STRING,
+            ),
+        ],
         responses={
             200: ProductSerializer(many=True),
 
@@ -104,12 +107,18 @@ class ProductViewSet(ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        security=[],
+    )
     @action(detail=False, methods=['get'])
     def new_product(self, request):
         queryset = Product.objects.all().order_by('-id')[:10]
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        security=[],
+    )
     @action(detail=False, methods=['get'])
     def list_new_product_by_category(self, request):
         category = Category.objects.get(
