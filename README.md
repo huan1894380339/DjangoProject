@@ -1,6 +1,7 @@
 ## Requirements
 ```
 Docker
+Docker-compose
 ```
 ## Install
 ```
