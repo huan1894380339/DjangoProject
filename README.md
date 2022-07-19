@@ -1,8 +1,8 @@
-#Requirements
+# Requirements
 ```
 Docker
 ```
-##Install
+## Install
 ```
 git clone https://github.com/huan1894380339/DjangoProject.git
 cd DjangoProject
