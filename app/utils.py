@@ -109,12 +109,14 @@ def active(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
     if user and default_token_generator.check_token(user, token):
-        if user.email in CustomerUser.objects.get(email=user.email, is_active=True):
+        try: 
+            CustomerUser.objects.get(email=user.email, is_active=True)
             return HttpResponse('Activation link is invalid!, account with this email already')
-        user.is_active = True
-        user.save()
-        Membership.objects.create(user=user)
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        except Exception:
+            user.is_active = True
+            user.save()
+            Membership.objects.create(user=user)
+            return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     return HttpResponse('Activation link is invalid!')
 
 
@@ -162,6 +164,5 @@ def check_account_email_already(email):
         account = CustomerUser.objects.get(email=email, is_active=True)
         if account:
             return True
-    except Exception as e:
-        raise e
-    return False
+    except Exception:
+        return False
