@@ -29,9 +29,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-h2#5jan5bz=2ap@&i&_&#lagamshmkju)wa*y(i%pmbce5f&v4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'app-django-123.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -201,6 +201,7 @@ CELERY_TASK_SERIALIZER = 'json'
 INTERNAL_IPS = [
     # ...
     '127.0.0.1',
+    'localhost'
     # ...
 ]
 
@@ -230,5 +231,5 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'REFETCH_SCHEMA_WITH_AUTH': True,
     'REFETCH_SCHEMA_ON_LOGOUT': True,
-    # 'DEFAULT_API_URL':'https://6418-8-21-11-136.ap.ngrok.io'
+    'DEFAULT_API_URL':'https://8b22-125-235-238-115.ap.ngrok.io'
 }

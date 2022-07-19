@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from __future__ import annotations
 
 from django.contrib import admin
@@ -20,7 +21,7 @@ from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-
+from app.swagger import CustomOpenAPISchemaGenerator
 schema_view = get_schema_view(
     openapi.Info(
         title='Management Server API',
@@ -30,9 +31,10 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email='contact@snippets.local'),
         license=openapi.License(name='BSD License'),
     ),
-    # url='https://6418-8-21-11-136.ap.ngrok.io',
+    url='https://8b22-125-235-238-115.ap.ngrok.io',
     public=True,
     permission_classes=[permissions.AllowAny],
+    generator_class=CustomOpenAPISchemaGenerator,
 )
 urlpatterns = [
     re_path(

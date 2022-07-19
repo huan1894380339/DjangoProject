@@ -41,6 +41,7 @@ class UserViewSet(GenericViewSet):
         request_body=Schema(
             type=TYPE_OBJECT,
             description='Generate token for user',
+
             required=['email', 'username', 'password', 'password2'],
             properties={
                 'email': Schema(title='Your Email', type=TYPE_STRING, format='email', description='A Email create multiple account with different username, but only one account with this email can be actived', example='17520528@gm.uit.edu.vn'),
@@ -58,6 +59,7 @@ class UserViewSet(GenericViewSet):
             400: 'Invalid Information, Please check it again',
 
         },
+        # tags=['Example Tag'],
     )
     @action(detail=False, methods=['post'])
     def sign_up(self, request):
@@ -96,6 +98,7 @@ class UserViewSet(GenericViewSet):
             ),
             400: 'Incorrect Email/Username or Password',
         },
+        # tags=['Example Tag'],
     )
     @action(detail=False, methods=['post'])
     def sign_in(self, request):

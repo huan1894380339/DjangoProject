@@ -12,9 +12,10 @@ from app.serializers.product import (
 from app.tasks import upload_image_task
 from app.utils import get_list_path_images
 from rest_framework.decorators import action
+from django.utils.decorators import method_decorator
 from rest_framework.pagination import PageNumberPagination
 
-from rest_framework.parsers import FormParser
+from rest_framework.parsers import FormParser, MultiPartParser
 
 from drf_yasg import openapi
 
@@ -33,12 +34,71 @@ class ProductViewSet(ModelViewSet):
             return ImgSerializer
         return ProductSerializer
 
-    parser_classes = [FormParser]
+    parser_classes = [FormParser, MultiPartParser]
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Detail Product by ID',
         responses={
-            201: 'Create account successfully',
+            201: ProductSerializer,
+            404: 'Invalid Product'
+
+        },
+    )
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+    
+    @swagger_auto_schema(
+        security=[],
+        operation_summary='List Product',
+        responses={
+            201: ProductSerializer(many=True),
+
+        },
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        security=[],
+        operation_summary='Update an existing Product by ID',
+        responses={
+            201: ProductSerializer,
+            404: 'Invalid Product'
+
+        },
+    )
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        security=[],
+        operation_summary='Partial Update an existing Product by ID',
+        responses={
+            201: ProductSerializer,
+            404: 'Invalid Product'
+
+        },
+    )
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        security=[],
+        operation_summary='Delete an existing Product by ID',
+        # responses={
+        #     201: ProductSerializer,
+
+        # },
+    )
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        security=[],
+        operation_summary='Create Product',
+        responses={
+            201: 'Create Product successfully',
             400: 'Invalid Information, Please check it again',
 
         },
@@ -52,6 +112,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Import product by csv',
         manual_parameters=[
             openapi.Parameter(
                 name='file',
@@ -71,6 +132,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Import images by Path',
     )
     @action(detail=False, methods=['post'])
     def img_product_from_path(self, request: Request) -> Response:
@@ -81,6 +143,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Find product by category',
         manual_parameters=[
             openapi.Parameter(
                 'category', openapi.IN_QUERY, description='Category (Name)', type=openapi.TYPE_STRING,
@@ -109,6 +172,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
+        operation_summary='Find new product',
     )
     @action(detail=False, methods=['get'])
     def new_product(self, request):
@@ -118,6 +182,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
+        
     )
     @action(detail=False, methods=['get'])
     def list_new_product_by_category(self, request):
