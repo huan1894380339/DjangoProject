@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from gdstorage.storage import GoogleDriveStorage
+from numpy import product
 from app.constant import ITEM_STATUS_ORDER, ITEM_STATUS_CART
 from django.core.validators import MinValueValidator, MaxValueValidator
 # Define Google Drive Storage
@@ -129,21 +130,31 @@ class CartItem(models.Model):
     def __str__(self):
         return str(self.id)
 
+# TODO: Calculate price total for items, handle discount
     @property
     def item_total(self):
-        total = self.quantity * self.product.price
+        try:
+            discount = Discount.objects.get(product=self.product)
+            if timezone.now() < discount.day_end:
+                price_discount = self.product.price - \
+                    self.product.price * discount.value_discount
+                total = self.quantity * price_discount
+            else:
+                total = self.quantity * self.product.price
+        except Exception:
+            total = self.quantity * self.product.price
         return total
 
+    # TODO: Calculate price total after apply voucher for items 
     def item_total_after_apply_voucher(self):
         membership = Membership.objects.select_related('user').filter(
             user=self.user.id,
         ).first()
-        total = self.quantity * self.product.price * \
-            ((100 - membership.voucher) / 100)
+        total = self.item_total - self.item_total* membership.voucher
         return round(total, 1)
 
 # TODO: Limit choices for field model
-# FIXME: anh hau fix
+# FIXME: anh hau fix    
 
 
 class Order(models.Model):

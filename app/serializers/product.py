@@ -68,9 +68,8 @@ class ProductDiscountSerializer(serializers.ModelSerializer):
                 price_discount = instance.price - instance.price * discount.value_discount
                 representation['price'] = {
                     'original_price': instance.price,
-                    'discount_price': price_discount, 'discount_value': discount.value_discount,
+                    'discount_price': price_discount, 'discount_value': f'{int(discount.value_discount*100)}%',
                 }
         except Exception:
             representation['price'] = instance.price
-
         return representation

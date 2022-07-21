@@ -28,13 +28,14 @@ class ItemSerializer(serializers.ModelSerializer):
         membership = Membership.objects.select_related('user').filter(
             user=request.user.id,
         ).first()
-        return '%s%s' % (membership.voucher, '%')
+        return '%s%s' % (int(membership.voucher*100), '%')
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         try:
             discount = Discount.objects.get(product=instance.product)
             if timezone.now() < discount.day_end:
+                # import ipdb;ipdb.set_trace()
                 price_discount = instance.product.price - \
                     instance.product.price * discount.value_discount
                 representation['price'] = {
@@ -43,7 +44,6 @@ class ItemSerializer(serializers.ModelSerializer):
                 }
         except Exception:
             representation['price'] = instance.product.price
-
         return representation
 
 
