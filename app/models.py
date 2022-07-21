@@ -145,16 +145,16 @@ class CartItem(models.Model):
             total = self.quantity * self.product.price
         return total
 
-    # TODO: Calculate price total after apply voucher for items 
+    # TODO: Calculate price total after apply voucher for items
     def item_total_after_apply_voucher(self):
         membership = Membership.objects.select_related('user').filter(
             user=self.user.id,
         ).first()
-        total = self.item_total - self.item_total* membership.voucher
+        total = self.item_total - self.item_total * membership.voucher
         return round(total, 1)
 
 # TODO: Limit choices for field model
-# FIXME: anh hau fix    
+# FIXME: anh hau fix
 
 
 class Order(models.Model):
