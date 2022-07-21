@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from app.models import CartItem, CustomerUser, Order, Product, Membership
+from app.models import Discount
+from django.utils import timezone
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -26,7 +28,23 @@ class ItemSerializer(serializers.ModelSerializer):
         membership = Membership.objects.select_related('user').filter(
             user=request.user.id,
         ).first()
-        return '%s%s' % (membership.voucher, '%')
+        return '%s%s' % (int(membership.voucher*100), '%')
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        try:
+            discount = Discount.objects.get(product=instance.product)
+            if timezone.now() < discount.day_end:
+                # import ipdb;ipdb.set_trace()
+                price_discount = instance.product.price - \
+                    instance.product.price * discount.value_discount
+                representation['price'] = {
+                    'original_price': instance.product.price,
+                    'discount_price': price_discount, 'discount_value': f'{int(discount.value_discount*100)}%',
+                }
+        except Exception:
+            representation['price'] = instance.product.price
+        return representation
 
 
 class CartItemSerializer(serializers.Serializer):

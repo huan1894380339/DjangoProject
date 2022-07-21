@@ -25,7 +25,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         membership = Membership.objects.select_related('user').filter(
             user=instance.user.id,
         ).first()
-        return '%s%s' % (membership.voucher, '%')
+        return '%s%s' % (int(membership.voucher*100), '%')
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):

@@ -201,7 +201,7 @@ CELERY_TASK_SERIALIZER = 'json'
 INTERNAL_IPS = [
     # ...
     '127.0.0.1',
-    'localhost'
+    'localhost',
     # ...
 ]
 
@@ -231,5 +231,4 @@ SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'REFETCH_SCHEMA_WITH_AUTH': True,
     'REFETCH_SCHEMA_ON_LOGOUT': True,
-    'DEFAULT_API_URL':'https://8b22-125-235-238-115.ap.ngrok.io'
 }
