@@ -8,7 +8,7 @@ def update_voucher(sender, instance, **kwargs):
     membership = Membership.objects.get(user=instance.user.id)
     if membership.voucher != 0.25:
         all_order = Order.objects.filter(user=instance.user, status='SU')
-        voucher = (sum(order.cart_total for order in all_order) * 1e-8) * 100
+        voucher = (sum(order.cart_total for order in all_order) * 0.01) / 100
         membership.voucher = voucher
         membership.save()
 

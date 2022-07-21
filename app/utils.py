@@ -109,7 +109,7 @@ def active(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, CustomerUser.DoesNotExist):
         user = None
     if user and default_token_generator.check_token(user, token):
-        try: 
+        try:
             CustomerUser.objects.get(email=user.email, is_active=True)
             return HttpResponse('Activation link is invalid!, account with this email already')
         except Exception:

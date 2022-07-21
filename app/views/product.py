@@ -7,12 +7,11 @@ from rest_framework.viewsets import ModelViewSet
 from app.models import Category, Product
 from app.serializers.product import (
     CsvSerializer,
-    ProductSerializer, ImgSerializer,
+    ProductSerializer, ImgSerializer, ProductDiscountSerializer,
 )
 from app.tasks import upload_image_task
 from app.utils import get_list_path_images
 from rest_framework.decorators import action
-from django.utils.decorators import method_decorator
 from rest_framework.pagination import PageNumberPagination
 
 from rest_framework.parsers import FormParser, MultiPartParser
@@ -32,6 +31,8 @@ class ProductViewSet(ModelViewSet):
             return CsvSerializer
         if self.action == 'img_product_from_path':
             return ImgSerializer
+        if self.action == 'list':
+            return ProductDiscountSerializer
         return ProductSerializer
 
     parser_classes = [FormParser, MultiPartParser]
@@ -41,13 +42,13 @@ class ProductViewSet(ModelViewSet):
         operation_summary='Detail Product by ID',
         responses={
             201: ProductSerializer,
-            404: 'Invalid Product'
+            404: 'Invalid Product',
 
         },
     )
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
-    
+
     @swagger_auto_schema(
         security=[],
         operation_summary='List Product',
@@ -64,7 +65,7 @@ class ProductViewSet(ModelViewSet):
         operation_summary='Update an existing Product by ID',
         responses={
             201: ProductSerializer,
-            404: 'Invalid Product'
+            404: 'Invalid Product',
 
         },
     )
@@ -76,7 +77,7 @@ class ProductViewSet(ModelViewSet):
         operation_summary='Partial Update an existing Product by ID',
         responses={
             201: ProductSerializer,
-            404: 'Invalid Product'
+            404: 'Invalid Product',
 
         },
     )
@@ -182,7 +183,7 @@ class ProductViewSet(ModelViewSet):
 
     @swagger_auto_schema(
         security=[],
-        
+
     )
     @action(detail=False, methods=['get'])
     def list_new_product_by_category(self, request):

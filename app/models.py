@@ -31,7 +31,7 @@ class Membership(models.Model):
     @property
     def get_voucher(self):
         all_order = self.order_user.all()
-        voucher = sum(order.cart_total for order in all_order) * 1e-8
+        voucher = sum(order.cart_total for order in all_order) * 0.01
         return voucher
 
 
@@ -72,7 +72,7 @@ class Product(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return '%s id:%s' % (self.title, str(self.id))
+        return self.title
 
     @property
     def img_url(self):
@@ -85,7 +85,7 @@ class Discount(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     day_start = models.DateTimeField()
     day_end = models.DateTimeField()
-    value_discount = models.IntegerField()
+    value_discount = models.FloatField()
 
 
 class Gallery(models.Model):
@@ -112,10 +112,14 @@ class Supplier(models.Model):
 
 
 class CartItem(models.Model):
-    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        CustomerUser, on_delete=models.CASCADE, limit_choices_to={
+            'user_cart__isnull': False,
+        }, related_name='user_cart',
+    )
     status = models.CharField(
         choices=ITEM_STATUS_CART,
-        max_length=1, default='N',
+        max_length=1, default='W',
     )
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name='cartitem_product',
@@ -138,10 +142,15 @@ class CartItem(models.Model):
             ((100 - membership.voucher) / 100)
         return round(total, 1)
 
+# TODO: Limit choices for field model
+# FIXME: anh hau fix
+
 
 class Order(models.Model):
     user = models.ForeignKey(
-        CustomerUser, on_delete=models.CASCADE, related_name='order_user',
+        CustomerUser, on_delete=models.CASCADE, related_name='order_user', limit_choices_to={
+            'user_cart__isnull': False,
+        },
     )
     cart_item = models.ManyToManyField(CartItem, related_name='order_cartitem')
     shiping_address = models.CharField(blank=False, null=False, max_length=255)

@@ -31,7 +31,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email='contact@snippets.local'),
         license=openapi.License(name='BSD License'),
     ),
-    url='https://8b22-125-235-238-115.ap.ngrok.io',
+    # url='https://8b22-125-235-238-115.ap.ngrok.io',
     public=True,
     permission_classes=[permissions.AllowAny],
     generator_class=CustomOpenAPISchemaGenerator,

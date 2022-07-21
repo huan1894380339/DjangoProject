@@ -55,7 +55,7 @@ class UserViewSet(GenericViewSet):
 
         ),
         responses={
-            201: 'Create account successfully',
+            201: 'Create account successfully, please check your email to verify account',
             400: 'Invalid Information, Please check it again',
 
         },
@@ -92,8 +92,8 @@ class UserViewSet(GenericViewSet):
             200: Schema(
                 type=TYPE_OBJECT,
                 properties={
-                    'access': Schema(title='Access Token', type=TYPE_STRING, format=TYPE_STRING),
-                    'refresh': Schema(title='Refresh Token', type=TYPE_STRING, format=TYPE_STRING),
+                    'access': Schema(title='Access Token', type=TYPE_STRING, format=TYPE_STRING, example='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90DINjU4MjAyNDQ5Ng0YWZmZWRmNzk0MiIVzZXJfaWQiOjR9.lBz7n6h2d2HYiFjmeNRB2qpJK-IKO24yMrGDcTFIBMk'),
+                    'refresh': Schema(title='Refresh Token', type=TYPE_STRING, format=TYPE_STRING, example='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0QiOjE2NTgyMDI0NDksIZjRiMGQ2NjlhMjkwIiwidXNlcl9pZCI6NH0.HZxmy7HiWN1r6Dt_k8b_oG0gT69hSqvYhT3aRGOw8oY'),
                 },
             ),
             400: 'Incorrect Email/Username or Password',

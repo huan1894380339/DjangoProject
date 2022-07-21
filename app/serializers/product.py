@@ -5,7 +5,8 @@ import io
 
 from rest_framework import serializers
 from django.core.files import File
-from app.models import Category, Product
+from app.models import Category, Discount, Product
+from django.utils import timezone
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -43,3 +44,33 @@ class CsvSerializer(serializers.Serializer):
                 title=line['title'],
                 price=line['price'],
             )
+
+
+class ProductDiscountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'code',
+            'category',
+            'title',
+            'description',
+            'price',
+            'active',
+            'img_product',
+        ]
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        try:
+            discount = Discount.objects.get(product=instance)
+            if timezone.now() < discount.day_end:
+                price_discount = instance.price - instance.price * discount.value_discount
+                representation['price'] = {
+                    'original_price': instance.price,
+                    'discount_price': price_discount, 'discount_value': discount.value_discount,
+                }
+        except Exception:
+            representation['price'] = instance.price
+
+        return representation

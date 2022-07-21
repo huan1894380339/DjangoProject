@@ -13,7 +13,6 @@ from django.forms import ModelForm, PasswordInput
 admin.site.register(Contact)
 admin.site.register(Supplier)
 admin.site.register(Category)
-admin.site.register(Discount)
 admin.site.register(BlackListedToken)
 
 
@@ -54,7 +53,11 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Membership)
 class MembershipAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'voucher')
+    list_display = ('id', 'user', 'show_value')
+
+    def show_value(self, obj):
+        return f'{int(obj.voucher*100)} %'
+    show_value.short_description = 'VOUCHER VALUE'
 
 
 @admin.register(CustomerUser)
@@ -87,3 +90,19 @@ class CustomerUserAdmin(admin.ModelAdmin):
 @admin.register(Gallery)
 class GalleryAdmin(admin.ModelAdmin):
     list_display = ('id', 'product')
+
+
+@admin.register(Discount)
+class DiscountAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'product', 'product_id',
+        'day_start', 'day_end', 'show_value',
+    )
+    list_filter = ['product']
+
+    def show_value(self, obj):
+        return f'{int(obj.value_discount*100)} %'
+    show_value.short_description = 'DISCOUNT VALUE'
+
+    def product_id(self, obj):
+        return obj.product.id
